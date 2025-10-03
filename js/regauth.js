@@ -14,6 +14,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     registerBtn.addEventListener('click', async () => {
+          const patientId = document.getElementById('registerPID').value;
+        const firstName = document.getElementById('registerFName').value;
+        const lastName = document.getElementById('registerLName').value;
+        const address = document.getElementById('registerAddress').value;
         const email = document.getElementById('registerEmail').value;
         const password = document.getElementById('registerPassword').value;
 
@@ -35,6 +39,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 email: email,
                 role: role
             });
+             // Save in "patients" collection
+             console.log("Saving to patients...");
+        await setDoc(doc(db, "patients", user.uid), {
+            patientid: patientId,
+            fname: firstName,
+            lname: lastName,
+            address: address,
+            email: email,
+        });
+            
 
             alert('Registration successful! Your role is patient.');
 
