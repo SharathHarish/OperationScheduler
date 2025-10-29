@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artemis Hospital | Home</title>
+  <link rel="stylesheet" href="..css/style.css">
+</head>
+<body>
+  <div id="include-header"></div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Welcome to <span>Artemis Hospital</span></h1>
+      <p class="tagline">Best Super Speciality Hospital & Trauma Centre in Gurgaon</p>
+    </div>
+  </section>
+
+  <section class="about-intro">
+    <div class="container">
+      <p>
+        Established in 2007, <strong>Artemis Hospitals</strong> was founded to provide the highest
+        standards of medical care to patients from Delhi-NCR, other states in India, and abroad.
+        We provide access to a multitude of in-patient and out-patient services across <strong>40+ specialties</strong>
+        with a team of over <strong>400 doctors</strong> and <strong>12 Centres of Excellence</strong>,
+        including cardiology, oncology, gastroenterology, internal medicine, nephrology, and orthopaedics.
+      </p>
+
+      <p>
+        Upholding the highest standards of quality care and patient safety in tertiary healthcare services,
+        Artemis Hospitals was the first hospital in Gurgaon to receive accreditation from the
+        <strong>Joint Communication International (JCI)</strong> and
+        <strong>National Accreditation Board for Hospitals and Healthcare Providers (NABH)</strong>.
+        As one of the best hospitals for heart, kidney, and cancer care in Gurgaon, we provide
+        state-of-the-art medical equipment and technologies to ensure precise treatments for patients.
+      </p>
+    </div>
+  </section>
+
+  <div id="include-footer"></div>
+
+  <script>
+    async function includeHTML(id, file) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const response = await fetch(file);
+      const html = await response.text();
+      el.innerHTML = html;
+    }
+    includeHTML("include-header", "header.html");
+    includeHTML("include-footer", "footer.html");
+  </script>
+</body>
+</html>

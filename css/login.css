@@ -1,0 +1,118 @@
+/* ===============================
+   LOGIN PAGE STYLES (Vision theme)
+   =============================== */
+
+/* ---- Variables (Match vision.css palette) ---- */
+:root {
+  --accent: #2e86de;
+  --bg: #f7f7f9;
+  --text: #222;
+  --muted: #555;
+  --border: #ddd;
+}
+
+/* ---- Global Reset ---- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: system-ui, Segoe UI, Roboto, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ---- Header Include ---- */
+#include-header {
+  width: 100%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+/* ---- Login Container ---- */
+.login-container {
+  background: #fff;
+  max-width: 400px;
+  width: 90%;
+  margin: 4rem auto;
+  padding: 2.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.login-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+}
+
+.login-container h2 {
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Inputs ---- */
+.login-container input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  margin: 0.6rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  background-color: #fafafa;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.login-container input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(46, 134, 222, 0.2);
+  outline: none;
+}
+
+/* ---- Button ---- */
+#loginBtn {
+  width: 100%;
+  margin-top: 1rem;
+  padding: 0.9rem 1rem;
+  background-color: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#loginBtn:hover {
+  background-color: #1d6fc1;
+  transform: translateY(-1px);
+}
+
+/* ---- Footer Include ---- */
+#include-footer {
+  margin-top: auto;
+  background: #fff;
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .login-container {
+    margin: 2rem auto;
+    padding: 2rem 1.5rem;
+  }
+}

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artemis Hospital | Vision, Mission & Core Values</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/vision.css" />
+
+  <!-- JS include script -->
+  <script src="js/include.js" defer></script>
+     <div id="include-header"></div>
+</head>
+<body>
+
+  <!-- Include Header -->
+  <div data-include="includes/header.html"></div>
+
+  <!-- Main Content -->
+  <main class="vision-container">
+    <h1>Vision, Mission & Core Values</h1>
+
+    <section class="vision-section">
+      <h2>Vision Statement</h2>
+      <p>
+        To create an Integrated World Class Healthcare System, Fostering, Protecting, Sustaining and Restoring Health
+        through Best in Class Medical Practices and Cutting Edge Technology developed through in depth Research carried
+        out by the World’s Best Scientific Minds.
+      </p>
+    </section>
+
+    <section class="core-section">
+      <h2>Core Values</h2>
+      <p>
+        The corporate value system at Artemis is founded on three pillars – <strong>Service, Compassion and Integrity.</strong>
+      </p>
+      <ul>
+        <li>Care for Customer</li>
+        <li>Respect for Associates</li>
+        <li>Excellence through Teamwork</li>
+        <li>Always Learning</li>
+        <li>Trust Mutually</li>
+        <li>Ethical Practices</li>
+      </ul>
+    </section>
+
+    <section class="mission-section">
+      <h2>Mission</h2>
+      <ul>
+        <li>Deliver world class patient care services</li>
+        <li>Excel in the delivery of specialized medical care supported by comprehensive research and education</li>
+        <li>Be the preferred choice for the world’s leading medical professionals and scientific minds</li>
+        <li>Develop, apply, evaluate and share new technology</li>
+        <li>Be an active partner in local community initiatives and contribute to its well-being and development</li>
+      </ul>
+    </section>
+  </main>
+
+</body>
+<script>
+    async function includeHTML(id, file) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const response = await fetch(file);
+      const html = await response.text();
+      el.innerHTML = html;
+    }
+    includeHTML("include-header", "header.html");
+    includeHTML("include-footer", "footer.html");
+  </script>
+</html>

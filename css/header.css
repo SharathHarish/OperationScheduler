@@ -1,0 +1,68 @@
+:root {
+  --accent: #2e86de; /* blue */
+  --light-accent: #f4f8ff;
+  --text: #222;
+}
+
+body {
+  font-family: system-ui, Arial, sans-serif;
+  margin: 0;
+}
+
+/* TOP RIBBON */
+.top-ribbon {
+  background: var(--accent);
+  color: white;
+  font-size: 14px;
+  padding: 6px 20px;
+}
+
+.ribbon-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ribbon-content .left img {
+  height: 20px;
+  margin-left: 5px;
+}
+
+.ribbon-content .right a {
+  color: #fff;
+  margin: 0 10px;
+  text-decoration: underline;
+}
+
+/* MIDDLE RIBBON */
+.middle-ribbon {
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.logo {
+  height: 60px; /* medium logo size */
+  width: auto;
+}
+
+/* BOTTOM RIBBON */
+.bottom-ribbon {
+  background: var(--accent);
+  text-align: center;
+  padding: 10px 0;
+}
+
+.bottom-ribbon nav a {
+  color: white;
+  text-decoration: none;
+  margin: 0 12px;
+  font-weight: 500;
+  transition: opacity 0.3s;
+}
+
+.bottom-ribbon nav a:hover {
+  opacity: 0.8;
+}

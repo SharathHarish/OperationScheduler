@@ -2,7 +2,7 @@
 :root {
   --bg: #f6f8fa;
   --card: #fff;
-  --accent: #0b6efd;
+  --accent: #7b6611;
   --muted: #666;
 }
 
@@ -19,7 +19,7 @@ body {
   justify-content:space-between;
   align-items:center;
   padding: 14px 20px;
-  background: linear-gradient(90deg,#0b6efd,#3aa0ff);
+  background: linear-gradient(90deg,#9f8308,#78870b);
   color: #fff;
 }
 .topbar h1 { margin:0; font-size:18px; }

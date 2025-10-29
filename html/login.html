@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hospital Scheduler</title>
+  <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+     <div id="include-header"></div>
+  <div class="login-container">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button id="loginBtn">Login</button>
+
+  <script type="module" src="../js/auth.js"></script>
+</body>
+<script>
+    async function includeHTML(id, file) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const response = await fetch(file);
+      const html = await response.text();
+      el.innerHTML = html;
+    }
+    includeHTML("include-header", "header.html");
+    includeHTML("include-footer", "footer.html");
+  </script>
+</html>

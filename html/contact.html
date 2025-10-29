@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Artemis Hospital | Contact Us</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="../css/contact.css" />
+
+  <!-- JS include script -->
+  <script src="js/include.js" defer></script>
+     <div id="include-header"></div>
+</head>
+<body>
+
+  <!-- Main Content -->
+  <main class="contact-container">
+    <h1>Contact Us</h1>
+
+    <section class="contact-section">
+      <h2>Artemis Hospital</h2>
+      <p>
+        Sector 51, Gurugram, Haryana - 122001
+      </p>
+    </section>
+
+    <section class="contact-section">
+      <h2>Emergency Contact</h2>
+      <p>📞 +91-124 4588 888</p>
+    </section>
+
+    <section class="contact-section">
+      <h2>For Appointments</h2>
+      <p>📞 +91-124 4511 111</p>
+    </section>
+
+    <section class="contact-section">
+      <h2>International Patient Services</h2>
+      <p>📞 +91 97112 09940</p>
+      <p>✉️ <a href="mailto:internationaldesk@artemishospitals.com">internationaldesk@artemishospitals.com</a></p>
+    </section>
+
+    <section class="contact-section">
+      <h2>Pharmacy</h2>
+      <p>24 hours home delivery of medicines within 15 kms</p>
+      <p>📞 +91 97160 16666</p>
+    </section>
+  </main>
+
+</body>
+<script>
+    async function includeHTML(id, file) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const response = await fetch(file);
+      const html = await response.text();
+      el.innerHTML = html;
+    }
+    includeHTML("include-header", "header.html");
+    includeHTML("include-footer", "footer.html");
+  </script>
+</html>

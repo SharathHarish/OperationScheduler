@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | Hospital Scheduler</title>
+  <link rel="stylesheet" href="../css/about.css" />
+</head>
+<body>
+  <div id="include-header"></div>
+
+  <div class="about-container">
+    <h2>About Our Hospital Scheduler</h2>
+    <p>
+      The Hospital Operation Scheduler is designed to simplify the management
+      of operation theatres, doctors, and surgical schedules, ensuring seamless
+      coordination between departments.
+    </p>
+
+    <div class="about-section">
+      <div class="about-card">
+        <h4>Our Vision</h4>
+        <p>To create a digitally empowered and efficient hospital environment where every operation is well-scheduled and optimized.</p>
+      </div>
+
+      <div class="about-card">
+        <h4>Our Mission</h4>
+        <p>To provide hospitals with a reliable, user-friendly, and data-driven operation scheduling platform.</p>
+      </div>
+
+      <div class="about-card">
+        <h4>Our Team</h4>
+        <p>Comprising healthcare professionals and developers dedicated to improving OT management systems across hospitals.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="include-footer"></div>
+
+  <script>
+    async function includeHTML(id, file) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const response = await fetch(file);
+      const html = await response.text();
+      el.innerHTML = html;
+    }
+    includeHTML("include-header", "header.html");
+    includeHTML("include-footer", "footer.html");
+  </script>
+</body>
+</html>
