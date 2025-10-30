@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patient Management | Admin</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/patients.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Artemis Hospitals — Patient Management</h1>
+    <div class="top-actions">
+      <span id="adminEmail">admin@artemishospitals.com</span>
+
+      <div class="dropdown">
+        <button class="dropbtn">Manage ▼</button>
+        <div class="dropdown-content">
+          <a href="doctor.html">Doctor</a>
+          <a href="patient.html">Patient</a>
+          <a href="operation.html">Operation</a>
+        </div>
+      </div>
+
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ✅ Add Patient Section -->
+    <section class="card">
+      <h2>Add Patient</h2>
+
+      <form id="patientForm" class="form-group">
+        <input type="text" id="patientId" placeholder="Patient ID (e.g., PAT001)" required />
+        <input type="text" id="patientName" placeholder="Patient Name" required />
+        <input type="number" id="patientAge" placeholder="Age" required />
+
+        <select id="patientGender" required>
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+
+        <input type="text" id="patientCondition" placeholder="Disease / Condition" required />
+
+        <select id="patientStatus" required>
+          <option value="">Select Status</option>
+          <option value="Normal">Normal</option>
+          <option value="Critical">Critical</option>
+          <option value="Not for Surgery">Not for Surgery</option>
+        </select>
+
+        <input type="email" id="patientEmail" placeholder="Email" />
+        <input type="text" id="patientPhone" placeholder="Phone Number" required />
+
+        <button type="submit" id="addPatientBtn">Add Patient</button>
+      </form>
+    </section>
+
+    <!-- ✅ Patients List Section -->
+    <section class="card">
+      <h2>Patients List</h2>
+
+      <div class="filter-row">
+        <select id="filterStatus">
+          <option value="">Filter by Status</option>
+          <option value="Normal">Normal</option>
+          <option value="Critical">Critical</option>
+          <option value="Not for Surgery">Not for Surgery</option>
+        </select>
+
+        <input type="text" id="searchPatientName" placeholder="Search by name..." />
+        <button id="searchPatientBtn">Search</button>
+      </div>
+
+      <ul id="patientsList" class="list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="../js/patients.js"></script>
+</body>
+</html>

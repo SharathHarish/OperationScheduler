@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Doctors List - Artemis Hospitals</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/doctorslist.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Artemis Hospitals — Doctors List</h1>
+    <div class="top-actions">
+      <span id="adminEmail">admin@artemishospitals.com</span>
+      <div class="dropdown">
+        <button class="dropbtn">Manage ▼</button>
+        <div class="dropdown-content">
+          <a href="doctor.html">Doctor</a>
+          <a href="patient.html">Patient</a>
+          <a href="operation.html">Operation</a>
+        </div>
+      </div>
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Doctors Directory</h2>
+
+      <!-- Filter Section -->
+      <div class="filter-row">
+        <input type="text" id="searchInput" placeholder="Search doctor by name..." />
+        <select id="departmentFilter">
+          <option value="">All Departments</option>
+          <option value="Cardiology">Cardiology</option>
+          <option value="Neurology">Neurology</option>
+          <option value="Orthopedics">Orthopedics</option>
+          <option value="General Medicine">General Medicine</option>
+          <option value="Pediatrics">Pediatrics</option>
+          <option value="ENT">ENT</option>
+          <option value="Dermatology">Dermatology</option>
+          <option value="Radiology">Radiology</option>
+          <option value="Oncology">Oncology</option>
+        </select>
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <ul id="doctorsList" class="list"></ul>
+    </section>
+  </main>
+
+  <!-- Update Modal -->
+  <div id="updateModal" class="modal">
+    <div class="modal-content card">
+      <h3>Edit Doctor Details</h3>
+      <form id="updateForm">
+        <div class="form-row">
+          <input id="updateName" type="text" placeholder="Doctor Name" />
+          <input id="updateQualification" type="text" placeholder="Qualification" />
+        </div>
+
+        <div class="form-row">
+          <label>Status:</label>
+          <select id="updateStatus">
+            <option value="Active">Active</option>
+            <option value="Not Available">Not Available</option>
+            <option value="Resigned">Resigned</option>
+            <option value="Retired">Retired</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label>Available Days:</label><br />
+          <div class="days">
+            <label><input type="checkbox" value="Mon" />Mon</label>
+            <label><input type="checkbox" value="Tue" />Tue</label>
+            <label><input type="checkbox" value="Wed" />Wed</label>
+            <label><input type="checkbox" value="Thu" />Thu</label>
+            <label><input type="checkbox" value="Fri" />Fri</label>
+            <label><input type="checkbox" value="Sat" />Sat</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Time Slots:</label>
+          <div id="timeSlotsContainer"></div>
+          <button type="button" id="addTimeSlotBtn">+ Add Time Slot</button>
+        </div>
+
+        <div class="form-row">
+          <button type="submit" id="saveChangesBtn">Save Changes</button>
+          <button type="button" id="cancelBtn" class="cancel-btn">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/doctorslist.js"></script>
+</body>
+</html>

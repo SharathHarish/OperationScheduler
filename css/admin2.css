@@ -1,0 +1,196 @@
+:root {
+  --bg: #f6f8fa;
+  --card: #fff;
+  --accent: #7b6611;
+  --muted: #666;
+}
+
+/* ---------------- GLOBAL ---------------- */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background: var(--bg);
+  color: #111;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  background: linear-gradient(90deg, #9f8308, #78870b);
+  color: #fff;
+}
+
+.topbar h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.top-actions #adminEmail {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background-color: #fff;
+  color: var(--accent);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  background-color: #fff;
+  min-width: 160px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  z-index: 1;
+}
+
+.dropdown-content a {
+  color: #111;
+  padding: 10px 14px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.top-actions button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 0;
+  cursor: pointer;
+  background: #fff;
+  color: #0b6efd;
+  font-weight: 600;
+}
+
+/* ---------------- CONTAINER ---------------- */
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  padding: 0 16px;
+}
+
+.card {
+  background: var(--card);
+  padding: 16px 24px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(9, 30, 66, 0.05);
+}
+
+.card h2 {
+  margin-bottom: 16px;
+  color: #222;
+}
+
+/* ---------------- FORM ---------------- */
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.form-column label {
+  font-weight: 600;
+  color: #333;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="time"],
+select {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #e6e9ee;
+  font-size: 15px;
+  min-width: 120px;
+}
+
+.time-slot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+button {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 0;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button:hover {
+  background: #6e5a0f;
+}
+
+/* ---------------- LIST ---------------- */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.list li {
+  padding: 10px;
+  border-radius: 8px;
+  background: #fbfdff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #eef3ff;
+}
+
+.list li .meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.small {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.action-btn {
+  background: transparent;
+  border: 0;
+  color: #d33;
+  cursor: pointer;
+  font-weight: 700;
+}

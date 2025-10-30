@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doctor Management | Admin</title>
+  <link rel="stylesheet" href="../css/admin.css" />
+  <link rel="stylesheet" href="../css/doctor.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Artemis Hospitals — Doctor Management</h1>
+    <div class="top-actions">
+      <span id="adminEmail">admin@artemishospitals.com</span>
+
+      <div class="dropdown">
+        <button class="dropbtn">Manage ▼</button>
+        <div class="dropdown-content">
+          <a href="doctor.html">Doctor</a>
+          <a href="patient.html">Patient</a>
+          <a href="operation.html">Operation</a>
+        </div>
+      </div>
+
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ✅ Add Doctor Section -->
+    <section class="card">
+      <h2>Add Doctor</h2>
+
+      <form id="doctorForm" class="form-group">
+         <input type="text" id="docId" placeholder="Doctor ID (e.g., DOC001)" required />
+
+        <input type="text" id="docName" placeholder="Doctor Name" required />
+
+        <select id="docQualification" required>
+          <option value="">Select Qualification</option>
+          <option value="MBBS">MBBS</option>
+          <option value="MD">MD</option>
+          <option value="MS">MS</option>
+          <option value="DM">DM</option>
+          <option value="MCh">MCh</option>
+          <option value="BDS">BDS</option>
+          <option value="MDS">MDS</option>
+        </select>
+
+        <select id="docDepartment" required>
+          <option value="">Select Department</option>
+          <option value="Cardiology">Cardiology</option>
+          <option value="Neurology">Neurology</option>
+          <option value="Orthopedics">Orthopedics</option>
+          <option value="Gastroenterology">Gastroenterology</option>
+          <option value="Oncology">Oncology</option>
+          <option value="Pediatrics">Pediatrics</option>
+          <option value="Urology">Urology</option>
+          <option value="Dermatology">Dermatology</option>
+          <option value="ENT">ENT</option>
+          <option value="General Surgery">General Surgery</option>
+        </select>
+
+        <select id="docSpecialization" required>
+          <option value="">Select Specialization</option>
+          <option value="Cardiologist">Cardiologist</option>
+          <option value="Neurologist">Neurologist</option>
+          <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+          <option value="Gastroenterologist">Gastroenterologist</option>
+          <option value="Oncologist">Oncologist</option>
+          <option value="Pediatrician">Pediatrician</option>
+          <option value="Urologist">Urologist</option>
+          <option value="Dermatologist">Dermatologist</option>
+          <option value="ENT Specialist">ENT Specialist</option>
+          <option value="General Surgeon">General Surgeon</option>
+        </select>
+
+        <input type="email" id="docEmail" placeholder="Email" required />
+        <input type="text" id="docPhone" placeholder="Phone Number" required />
+
+        <!-- ✅ Available Days -->
+        <fieldset>
+          <legend>Available Days</legend>
+          <div class="days-checkboxes">
+            <label><input type="checkbox" name="availableDays" value="Monday" /> Monday</label>
+            <label><input type="checkbox" name="availableDays" value="Tuesday" /> Tuesday</label>
+            <label><input type="checkbox" name="availableDays" value="Wednesday" /> Wednesday</label>
+            <label><input type="checkbox" name="availableDays" value="Thursday" /> Thursday</label>
+            <label><input type="checkbox" name="availableDays" value="Friday" /> Friday</label>
+            <label><input type="checkbox" name="availableDays" value="Saturday" /> Saturday</label>
+          </div>
+        </fieldset>
+
+        <!-- ✅ Time Slots -->
+        <fieldset>
+          <legend>Time Slots</legend>
+          <div id="timeSlotsContainer"></div>
+          <button type="button" id="addSlotBtn">+ Add Time Slot</button>
+        </fieldset>
+
+        <!-- ✅ Status -->
+        <select id="docStatus" required>
+          <option value="">Select Status</option>
+          <option value="Active">Active</option>
+          <option value="Resigned">Resigned</option>
+          <option value="Retired">Retired</option>
+          <option value="Not Available">Not Available</option>
+        </select>
+
+        <button type="submit" id="addDoctorBtn">Add Doctor</button>
+      </form>
+    </section>
+
+    <!-- ✅ Doctor List Section -->
+    <section class="card">
+      <h2>Doctors List</h2>
+
+      <div class="filter-row">
+        <select id="filterDepartment">
+          <option value="">Filter by Department</option>
+          <option value="Cardiology">Cardiology</option>
+          <option value="Neurology">Neurology</option>
+          <option value="Orthopedics">Orthopedics</option>
+          <option value="Gastroenterology">Gastroenterology</option>
+          <option value="Oncology">Oncology</option>
+          <option value="Pediatrics">Pediatrics</option>
+          <option value="Urology">Urology</option>
+          <option value="Dermatology">Dermatology</option>
+          <option value="ENT">ENT</option>
+          <option value="General Surgery">General Surgery</option>
+        </select>
+
+        <input type="text" id="searchName" placeholder="Search by name..." />
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <ul id="doctorsList" class="list"></ul>
+    </section>
+  </main>
+
+  <script type="module" src="../js/doctors.js"></script>
+</body>
+</html>
