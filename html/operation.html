@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Operation Scheduling | Admin</title>
+  <link rel="stylesheet" href="../css/patients.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <h1>Artemis Hospitals — Operation Scheduling</h1>
+
+    <div class="top-actions">
+      <span id="adminEmail">admin@artemishospitals.com</span>
+
+      <div class="dropdown">
+        <button class="dropbtn">Manage ▼</button>
+        <div class="dropdown-content">
+          <a href="doctor.html">Doctor</a>
+          <a href="patients.html">Patient</a>
+          <a href="operation.html">Operation</a>
+        </div>
+      </div>
+
+      <button id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- Add Operation -->
+    <section class="card">
+      <h2>Add Operation Schedule</h2>
+
+      <form id="operationForm" class="form-group">
+
+        <!-- Date & Time -->
+        <input type="date" id="schedDate" required />
+        <input type="time" id="schedStart" required />
+        <input type="time" id="schedEnd" required />
+
+        <!-- OT -->
+        <input type="text" id="schedOT" placeholder="Operation Theater ID" required />
+
+        <!-- Surgeons Dropdown -->
+        <label>Surgeon</label>
+        <select id="schedSurgeon" required>
+          <option value="">Loading...</option>
+        </select>
+
+        <!-- Anesthesiologist Dropdown -->
+        <label>Anesthesiologist</label>
+        <select id="schedAnes" required>
+          <option value="">Loading...</option>
+        </select>
+
+        <!-- Patient -->
+    <input type="text" id="patientIdInput" placeholder="Patient ID" readonly required style="background:#f1f1f1; font-weight:bold;" />
+
+        <!-- Remarks -->
+        <input type="text" id="schedRemarks" placeholder="Remarks / Materials Needed" />
+
+        <button type="submit" id="addScheduleBtn">Add Schedule</button>
+      </form>
+    </section>
+
+    <!-- Operation List -->
+    <section class="card">
+      <h2>Scheduled Operations</h2>
+
+      <div class="filter-row">
+        <input type="date" id="filterDate" />
+        <input type="text" id="filterPatient" placeholder="Search by patient ID or name" />
+        <button id="searchScheduleBtn">Search</button>
+      </div>
+
+      <ul id="schedulesList" class="list"></ul>
+    </section>
+
+  </main>
+
+  <script type="module" src="../js/operation.js"></script>
+</body>
+</html>

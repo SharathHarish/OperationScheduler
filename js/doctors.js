@@ -53,6 +53,7 @@ const departmentSpecializationMap = {
   "Urology": ["Urologist"],
   "Dermatology": ["Dermatologist"],
   "ENT": ["ENT Specialist"],
+  "Anesthesiology": ["Anesthesiologist"],
   "General Surgery": ["General Surgeon"]
 };
 
