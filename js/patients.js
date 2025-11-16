@@ -1,7 +1,9 @@
-import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { collection, getDocs, addDoc, setDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 import { db } from "./firebase-init.js";
 
-// DOM Elements
+/* -------------------------------------------------------------
+   📌 DOM Elements
+-------------------------------------------------------------- */
 const form = document.getElementById("patientForm");
 const list = document.getElementById("patientsList");
 const filterStatus = document.getElementById("filterStatus");
@@ -9,16 +11,17 @@ const searchBtn = document.getElementById("searchPatientBtn");
 const searchInput = document.getElementById("searchPatientName");
 const referredBySelect = document.getElementById("referredBy");
 
-// patients stored locally
-let patients = JSON.parse(localStorage.getItem("patients")) || [];
+/* -------------------------------------------------------------
+   🔵 Local Arrays
+-------------------------------------------------------------- */
+let patients = []; // Patients fetched from Firebase
 
-/* -----------------------------------------------------
-   🔵 Fetch Doctors (Firebase v9 Modular) and store locally
------------------------------------------------------- */
+/* -------------------------------------------------------------
+   🔵 Fetch Doctors (Firebase v9 Modular)
+-------------------------------------------------------------- */
 async function fetchDoctorsAndStore() {
   try {
     console.log("Fetching doctors from Firebase...");
-
     const doctorsRef = collection(db, "doctors");
     const snapshot = await getDocs(doctorsRef);
 
@@ -38,44 +41,58 @@ async function fetchDoctorsAndStore() {
   }
 }
 
-/* -----------------------------------------------------
+/* -------------------------------------------------------------
    🔵 Populate "Referred By" Dropdown (Skip Anaesthesiologists)
------------------------------------------------------- */
+-------------------------------------------------------------- */
 function populateReferredByDropdown() {
   const doctors = JSON.parse(localStorage.getItem("doctors")) || [];
-
   referredBySelect.innerHTML = `<option value="">Select Doctor</option>`;
 
   doctors
     .filter(doc => {
       const spec = (doc.specialization || "").toLowerCase();
-
-      // Exclude anaesthesiologist (any spelling variant)
       return !spec.includes("anaes") && !spec.includes("anesth");
     })
     .forEach(doc => {
       const opt = document.createElement("option");
       opt.value = doc.name;
-
-      if (doc.specialization && doc.specialization.trim() !== "") {
-        opt.textContent = `${doc.name} (${doc.specialization})`;
-      } else {
-        opt.textContent = doc.name;
-      }
-
+      opt.textContent = doc.specialization ? `${doc.name} (${doc.specialization})` : doc.name;
       referredBySelect.appendChild(opt);
     });
 }
 
-/* -----------------------------------------------------
-   🔵 Render Patients
------------------------------------------------------- */
+/* -------------------------------------------------------------
+   🔵 Fetch Patients from Firebase
+-------------------------------------------------------------- */
+async function fetchPatients() {
+  try {
+    const patientsRef = collection(db, "patients");
+    const snapshot = await getDocs(patientsRef);
+
+    patients = [];
+    snapshot.forEach(doc => {
+      patients.push({
+        id: doc.id,
+        ...doc.data()
+      });
+    });
+
+    renderPatients(filterStatus.value);
+
+  } catch (error) {
+    console.error("Error fetching patients:", error);
+  }
+}
+
+/* -------------------------------------------------------------
+   🔵 Render Patients (Safe Version)
+-------------------------------------------------------------- */
 function renderPatients(filter = "") {
   list.innerHTML = "";
 
   let filtered = patients.filter(p =>
-    p.name.toLowerCase().includes(searchInput.value.toLowerCase()) &&
-    (filter ? p.status === filter : true)
+    (p.name || "").toLowerCase().includes((searchInput.value || "").toLowerCase()) &&
+    (filter ? (p.status || "") === filter : true)
   );
 
   if (filtered.length === 0) {
@@ -87,16 +104,16 @@ function renderPatients(filter = "") {
     const index = patients.findIndex(x => x.id === p.id);
 
     const li = document.createElement("li");
-    li.classList.add(`status-${p.status.toLowerCase()}`);
+    li.classList.add(`status-${(p.status || "unknown").toLowerCase()}`);
 
     li.innerHTML = `
       <div>
-        <strong>${p.name}</strong> (${p.id})<br>
-        Age: ${p.age}, Gender: ${p.gender}<br>
-        Status: <span class="status-label ${p.status.toLowerCase()}">${p.status}</span><br>
-        Condition: ${p.condition}<br>
+        <strong>${p.name || "Unnamed"}</strong> (${p.id})<br>
+        Age: ${p.age || "N/A"}, Gender: ${p.gender || "N/A"}<br>
+        Status: <span class="status-label ${(p.status || "unknown").toLowerCase()}">${p.status || "Unknown"}</span><br>
+        Condition: ${p.condition || "N/A"}<br>
         Referred By: <b>${p.referredBy || "N/A"}</b><br>
-        Contact: ${p.phone}
+        Contact: ${p.phone || "N/A"}
       </div>
 
       <div>
@@ -110,48 +127,60 @@ function renderPatients(filter = "") {
   });
 }
 
-/* -----------------------------------------------------
-   🔵 Add / Update patient
------------------------------------------------------- */
-form.addEventListener("submit", (e) => {
+/* -------------------------------------------------------------
+   🔵 Add / Update Patient (Firestore)
+-------------------------------------------------------------- */
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const patient = {
-    id: form.patientId.value.trim(),
-    name: form.patientName.value.trim(),
-    age: form.patientAge.value,
-    gender: form.patientGender.value,
-    condition: form.patientCondition.value.trim(),
-    status: form.patientStatus.value,
-    email: form.patientEmail.value.trim(),
-    phone: form.patientPhone.value.trim(),
-    referredBy: form.referredBy.value || "",
-  };
+  const patientId = form.patientId.value.trim();
+  const patientName = form.patientName.value.trim();
 
-  // Prevent duplicate ID
-  if (!form.dataset.editIndex && patients.some(p => p.id === patient.id)) {
-    alert("A patient with this ID already exists!");
+  if (!patientId || !patientName) {
+    alert("Patient ID and Name are required!");
     return;
   }
 
+  const patient = {
+    name: patientName,
+    age: form.patientAge.value || "",
+    gender: form.patientGender.value || "",
+    condition: form.patientCondition.value.trim() || "",
+    status: form.patientStatus.value || "Unknown",
+    email: form.patientEmail.value.trim() || "",
+    phone: form.patientPhone.value.trim() || "",
+    referredBy: form.referredBy.value || "",
+  };
+
   const editIndex = form.dataset.editIndex;
 
-  if (editIndex !== undefined) {
-    patients[editIndex] = patient;
-    delete form.dataset.editIndex;
-    document.getElementById("addPatientBtn").textContent = "Add Patient";
-  } else {
-    patients.push(patient);
-  }
+  try {
+    if (editIndex !== undefined) {
+      // Update existing patient
+      const existingId = patients[editIndex].id;
+      await setDoc(doc(db, "patients", existingId), patient);
+      patients[editIndex] = { id: existingId, ...patient };
+      delete form.dataset.editIndex;
+      document.getElementById("addPatientBtn").textContent = "Add Patient";
+    } else {
+      // Add new patient
+      const docRef = doc(db, "patients", patientId);
+      await setDoc(docRef, patient);
+      patients.push({ id: patientId, ...patient });
+    }
 
-  localStorage.setItem("patients", JSON.stringify(patients));
-  form.reset();
-  renderPatients(filterStatus.value);
+    form.reset();
+    renderPatients(filterStatus.value);
+
+  } catch (error) {
+    console.error("Error saving patient:", error);
+    alert("Failed to save patient. Check console for details.");
+  }
 });
 
-/* -----------------------------------------------------
-   🔵 Edit or Delete patient
------------------------------------------------------- */
+/* -------------------------------------------------------------
+   🔵 Edit or Delete Patient
+-------------------------------------------------------------- */
 list.addEventListener("click", (e) => {
   if (e.target.classList.contains("edit-btn")) {
     const index = e.target.dataset.index;
@@ -173,18 +202,22 @@ list.addEventListener("click", (e) => {
 
   if (e.target.classList.contains("delete-btn")) {
     const index = e.target.dataset.index;
+    const patientId = patients[index].id;
 
     if (confirm("Are you sure you want to delete this patient?")) {
-      patients.splice(index, 1);
-      localStorage.setItem("patients", JSON.stringify(patients));
-      renderPatients(filterStatus.value);
+      deleteDoc(doc(db, "patients", patientId))
+        .then(() => {
+          patients.splice(index, 1);
+          renderPatients(filterStatus.value);
+        })
+        .catch(err => console.error("Error deleting patient:", err));
     }
   }
 });
 
-/* -----------------------------------------------------
-   🔵 Correct Schedule button → redirect with patient ID
------------------------------------------------------- */
+/* -------------------------------------------------------------
+   🔵 Schedule Operation Button
+-------------------------------------------------------------- */
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("schedule-btn")) {
     const id = e.target.getAttribute("data-id");
@@ -192,19 +225,15 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* -----------------------------------------------------
+/* -------------------------------------------------------------
    🔵 Filters
------------------------------------------------------- */
+-------------------------------------------------------------- */
 searchBtn.addEventListener("click", () => renderPatients(filterStatus.value));
 filterStatus.addEventListener("change", () => renderPatients(filterStatus.value));
 searchInput.addEventListener("input", () => renderPatients(filterStatus.value));
 
-/* -----------------------------------------------------
+/* -------------------------------------------------------------
    🔵 Initial Page Load
------------------------------------------------------- */
-
-// Load doctors from Firebase → store local → update dropdown
+-------------------------------------------------------------- */
 fetchDoctorsAndStore();
-
-// Load patients into UI
-renderPatients();
+fetchPatients();
