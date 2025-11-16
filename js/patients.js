@@ -1,3 +1,6 @@
+import { collection, getDocs } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { db } from "./firebase-init.js";
+
 // DOM Elements
 const form = document.getElementById("patientForm");
 const list = document.getElementById("patientsList");
@@ -9,35 +12,60 @@ const referredBySelect = document.getElementById("referredBy");
 // patients stored locally
 let patients = JSON.parse(localStorage.getItem("patients")) || [];
 
-async function loadDoctors() {
+/* -----------------------------------------------------
+   🔵 Fetch Doctors (Firebase v9 Modular) and store locally
+------------------------------------------------------ */
+async function fetchDoctorsAndStore() {
   try {
-    doctorDropdown.innerHTML = `<option>Loading doctors...</option>`;
+    console.log("Fetching doctors from Firebase...");
 
-    const snapshot = await getDocs(collection(db, "doctors"));
+    const doctorsRef = collection(db, "doctors");
+    const snapshot = await getDocs(doctorsRef);
 
-    doctorDropdown.innerHTML = `<option value="">Select Referred Doctor</option>`;
-
+    let doctors = [];
     snapshot.forEach(doc => {
-      const data = doc.data();
-
-      doctorDropdown.innerHTML += `
-        <option value="${data.name}">
-          ${data.name} (${data.specialization})
-        </option>
-      `;
+      doctors.push({
+        id: doc.id,
+        ...doc.data()
+      });
     });
 
-    if (snapshot.empty) {
-      doctorDropdown.innerHTML = `<option>No doctors available</option>`;
-    }
+    localStorage.setItem("doctors", JSON.stringify(doctors));
+    populateReferredByDropdown();
 
-  } catch (err) {
-    console.error("🔥 Error loading doctors:", err);
-    doctorDropdown.innerHTML = `<option>Error loading doctors</option>`;
+  } catch (error) {
+    console.error("Error fetching doctors:", error);
   }
 }
 
-loadDoctors();
+/* -----------------------------------------------------
+   🔵 Populate "Referred By" Dropdown (Skip Anaesthesiologists)
+------------------------------------------------------ */
+function populateReferredByDropdown() {
+  const doctors = JSON.parse(localStorage.getItem("doctors")) || [];
+
+  referredBySelect.innerHTML = `<option value="">Select Doctor</option>`;
+
+  doctors
+    .filter(doc => {
+      const spec = (doc.specialization || "").toLowerCase();
+
+      // Exclude anaesthesiologist (any spelling variant)
+      return !spec.includes("anaes") && !spec.includes("anesth");
+    })
+    .forEach(doc => {
+      const opt = document.createElement("option");
+      opt.value = doc.name;
+
+      if (doc.specialization && doc.specialization.trim() !== "") {
+        opt.textContent = `${doc.name} (${doc.specialization})`;
+      } else {
+        opt.textContent = doc.name;
+      }
+
+      referredBySelect.appendChild(opt);
+    });
+}
 
 /* -----------------------------------------------------
    🔵 Render Patients
@@ -159,8 +187,8 @@ list.addEventListener("click", (e) => {
 ------------------------------------------------------ */
 document.addEventListener("click", (e) => {
   if (e.target.classList.contains("schedule-btn")) {
-      const id = e.target.getAttribute("data-id");
-      window.location.href = `operation.html?patientId=${id}`;
+    const id = e.target.getAttribute("data-id");
+    window.location.href = `operation.html?patientId=${id}`;
   }
 });
 
@@ -171,5 +199,12 @@ searchBtn.addEventListener("click", () => renderPatients(filterStatus.value));
 filterStatus.addEventListener("change", () => renderPatients(filterStatus.value));
 searchInput.addEventListener("input", () => renderPatients(filterStatus.value));
 
-/* Initial render */
+/* -----------------------------------------------------
+   🔵 Initial Page Load
+------------------------------------------------------ */
+
+// Load doctors from Firebase → store local → update dropdown
+fetchDoctorsAndStore();
+
+// Load patients into UI
 renderPatients();
