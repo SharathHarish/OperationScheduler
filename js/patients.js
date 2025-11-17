@@ -158,7 +158,6 @@ async function fetchDoctorsAndStore() {
     console.error("Error fetching doctors:", err);
   }
 }
-
 function populateReferredByDropdown() {
   const doctors = JSON.parse(localStorage.getItem("doctors") || "[]");
   referredBySelect.innerHTML = `<option value="">Select Doctor</option>`;
@@ -296,6 +295,7 @@ form.addEventListener("submit", async (e) => {
 
   // build patient object
   const patientObj = {
+    patientId: vals.patientId, 
     name: vals.patientName,
     age: vals.patientAge,
     gender: vals.patientGender,
@@ -312,8 +312,8 @@ form.addEventListener("submit", async (e) => {
       // update existing doc
       const editIndex = Number(form.dataset.editIndex);
       const existingId = patients[editIndex].id;
-      await setDoc(doc(db, "patients", existingId), patientObj);
-      patients[editIndex] = { id: existingId, ...patientObj };
+      await setDoc(doc(db, "patients", patientId), patientObj);
+      patients[editIndex] = { id: patientId, ...patientObj };
       delete form.dataset.editIndex;
       form.patientId.disabled = false;
       addBtn.textContent = "Add Patient";

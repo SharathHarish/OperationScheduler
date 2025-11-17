@@ -13,7 +13,6 @@ import {
   getDoc,
   serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-
 /* --------------------------
    Popup functions (reusable)
    -------------------------- */
@@ -43,7 +42,40 @@ if (popupCloseBtn) {
     setTimeout(() => { overlay.style.display = 'none'; }, 180);
   });
 }
+// -----------------------------
+// Populate doctors dropdown
+// -----------------------------
+async function fetchPatientsAndStore() {
+  try {
+    const patientsRef = collection(db, "patients");
+    const psnapshot = await getDocs(patientsRef);
+    const patients = [];
+    snapshot.forEach(p => patients.push({ id: p.id, ...p.data() }));
+    localStorage.setItem("patients", JSON.stringify(patients));
+   sendScheduleEmail();
+  } catch (err) {
+    console.error("Error fetching patients:", err);
+  }
+}
+async function sendScheduleEmail(schedule) {
+    try {
+    const templateParams = {
+      patient_name: p.name || '-', // make sure schedule has patientName
+      patient_id: p.id || '-'
+    };
 
+    // send email
+    await emailjs.send(
+      'service_awggasq',       // EmailJS Service ID
+      'template_7dolonf',      // EmailJS Template ID
+      templateParams
+    );
+
+    console.log('Email sent successfully.');
+  } catch (err) {
+    console.error('EmailJS send error:', err);
+  }
+}
 /* --------------------------
    DOM refs
    -------------------------- */
@@ -348,6 +380,8 @@ addScheduleBtn.addEventListener('click', async () => {
     } else {
       await addDoc(collection(db, 'schedules'), scheduleDoc);
       showPopup('Success', 'Schedule added successfully.', 'success');
+      // SEND EMAIL AFTER SUCCESS
+      sendScheduleEmail(scheduleDoc);
     }
 
     // reset while preserving patient id if readOnly
