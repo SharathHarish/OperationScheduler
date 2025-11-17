@@ -83,18 +83,40 @@ document.addEventListener('DOMContentLoaded', () => {
             input.value = patientId;
             input.readOnly = true;
         }
-    } else {
-        console.warn("No patient ID received from patient.html");
-    }
 
- // Fill patient ID into the input field
-    const patientInput = document.getElementById('patientIdInput');
-    if (patientInput) {
-        patientInput.value = patientId;
-        patientInput.readOnly = true; // make it non-editable
+        // 🔵 Fetch & display patient's uploaded document
+        loadPatientDoc(patientId);
     }
+});
 
-    });
+
+function displayPatientDocument(url) {
+  const box = document.getElementById("patientDocBox");
+  if (!box) return;
+
+  const ext = url.split('.').pop().toLowerCase();
+  box.innerHTML = "";
+
+  if (ext === "pdf") {
+    box.innerHTML = `
+      <h3>Patient Document:</h3>
+      <embed src="${url}" type="application/pdf" width="100%" height="500px" />
+      <br><a href="${url}" target="_blank">Open PDF</a>
+    `;
+  } else if (["jpg", "jpeg", "png"].includes(ext)) {
+    box.innerHTML = `
+      <h3>Patient Image:</h3>
+      <img src="${url}" width="300" style="border:1px solid #ccc; border-radius:6px;" />
+      <br><a href="${url}" target="_blank">Open Image</a>
+    `;
+  } else {
+    box.innerHTML = `
+      <h3>Document:</h3>
+      <a href="${url}" target="_blank">Download Document</a>
+    `;
+  }
+}
+
 
     // Operation Scheduling DOM Elements
 const schedDate = document.getElementById('schedDate');
@@ -219,3 +241,4 @@ function populateDoctorDropdowns() {
 }
 // Load doctors from Firebase → store local → update dropdown
 fetchDoctorsAndStore();
+

@@ -2,47 +2,68 @@ import { db, auth } from './firebase-init.js';
 import {
   collection,
   addDoc,
+  getDocs,
+  getDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
   query,
   where,
-  getDocs,
   onSnapshot,
   orderBy
-} from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-import { signOut } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+} from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-const doctorForm = document.getElementById('doctorForm');
-const addSlotBtn = document.getElementById('addSlotBtn');
-const timeSlotsContainer = document.getElementById('timeSlotsContainer');
-const logoutBtn = document.getElementById('logoutBtn');
-const doctorsList = document.getElementById('doctorsList');
-const filterDepartment = document.getElementById('filterDepartment');
-const searchName = document.getElementById('searchName');
-const searchBtn = document.getElementById('searchBtn');
+import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
-// ✅ Logout
-if (logoutBtn) {
-  logoutBtn.addEventListener('click', async () => {
-    await signOut(auth);
-    alert('Logged out successfully!');
-    window.location.href = 'login.html';
-  });
-}
+/* -------------------------------------------------------
+   DOM ELEMENTS
+-------------------------------------------------------- */
+const doctorForm = document.getElementById("doctorForm");
+const addDoctorBtn = document.getElementById("addDoctorBtn");
+const addSlotBtn = document.getElementById("addSlotBtn");
+const timeSlotsContainer = document.getElementById("timeSlotsContainer");
+const doctorsList = document.getElementById("doctorsList");
 
-// ✅ Add Time Slot
-addSlotBtn.addEventListener('click', () => {
-  const slotDiv = document.createElement('div');
-  slotDiv.classList.add('slot-row');
+const filterDepartment = document.getElementById("filterDepartment");
+const searchName = document.getElementById("searchName");
+const searchBtn = document.getElementById("searchBtn");
+
+/* -------------------------------------------------------
+   GLOBAL VARIABLES
+-------------------------------------------------------- */
+let editDoctorId = null; // 🔥 Tracks if editing
+
+/* -------------------------------------------------------
+   LOGOUT
+-------------------------------------------------------- */
+document.getElementById("logoutBtn")?.addEventListener("click", async () => {
+  await signOut(auth);
+  alert("Logged out successfully!");
+  window.location.href = "login.html";
+});
+
+/* -------------------------------------------------------
+   ADD TIME SLOT
+-------------------------------------------------------- */
+addSlotBtn.addEventListener("click", () => {
+  const slotDiv = document.createElement("div");
+  slotDiv.classList.add("slot-row");
+
   slotDiv.innerHTML = `
     <input type="time" class="fromTime" required />
     <span>to</span>
     <input type="time" class="toTime" required />
     <button type="button" class="removeSlotBtn">✖</button>
   `;
-  slotDiv.querySelector('.removeSlotBtn').addEventListener('click', () => slotDiv.remove());
+
+  slotDiv.querySelector(".removeSlotBtn").addEventListener("click", () => slotDiv.remove());
+
   timeSlotsContainer.appendChild(slotDiv);
 });
 
-// ✅ Department–Specialization validation
+/* -------------------------------------------------------
+   DEPT – SPECIALIZATION VALIDATION
+-------------------------------------------------------- */
 const departmentSpecializationMap = {
   "Cardiology": ["Cardiologist"],
   "Neurology": ["Neurologist"],
@@ -57,169 +78,213 @@ const departmentSpecializationMap = {
   "General Surgery": ["General Surgeon"]
 };
 
-// ✅ Auto-generate doctor ID (DOC001, DOC002...)
+/* -------------------------------------------------------
+   GENERATE DOCTOR ID (USED ONLY FOR ADD)
+-------------------------------------------------------- */
 async function generateDoctorId() {
-  const doctorsRef = collection(db, "doctors");
-  const snapshot = await getDocs(doctorsRef);
-  const count = snapshot.size + 1;
-  return `DOC${count.toString().padStart(3, '0')}`;
+  const snap = await getDocs(collection(db, "doctors"));
+  const count = snap.size + 1;
+  return `DOC${count.toString().padStart(3, "0")}`;
 }
 
-// ✅ Add Doctor
-doctorForm.addEventListener('submit', async (e) => {
+/* -------------------------------------------------------
+   ADD / UPDATE DOCTOR
+-------------------------------------------------------- */
+doctorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const name = document.getElementById('docName').value.trim();
-  const qualification = document.getElementById('docQualification').value;
-  const department = document.getElementById('docDepartment').value;
-  const specialization = document.getElementById('docSpecialization').value;
-  const email = document.getElementById('docEmail').value.trim();
-  const phone = document.getElementById('docPhone').value.trim();
-  const status = document.getElementById('docStatus').value;
-  const days = Array.from(document.querySelectorAll('input[name="availableDays"]:checked')).map(cb => cb.value);
-  const timeSlots = Array.from(document.querySelectorAll('#timeSlotsContainer .slot-row')).map(row => ({
-    from: row.querySelector('.fromTime').value,
-    to: row.querySelector('.toTime').value
+  const name = document.getElementById("docName").value.trim();
+  const qualification = document.getElementById("docQualification").value;
+  const department = document.getElementById("docDepartment").value;
+  const specialization = document.getElementById("docSpecialization").value;
+  const email = document.getElementById("docEmail").value.trim();
+  const phone = document.getElementById("docPhone").value.trim();
+  const status = document.getElementById("docStatus").value;
+
+  const availableDays = Array.from(document.querySelectorAll('input[name="availableDays"]:checked')).map(d => d.value);
+
+  const timeSlots = Array.from(document.querySelectorAll(".slot-row")).map(row => ({
+    from: row.querySelector(".fromTime").value,
+    to: row.querySelector(".toTime").value
   }));
 
-  // Validation
+  // Department & specialization validation
   if (!departmentSpecializationMap[department]?.includes(specialization)) {
-    alert(`❌ Specialization "${specialization}" does not match Department "${department}".`);
+    alert(`❌ "${specialization}" is not valid for ${department}.`);
     return;
   }
 
+  const doctorsRef = collection(db, "doctors");
+
   try {
-    const doctorsRef = collection(db, "doctors");
+    if (editDoctorId) {
+      /* -------------------------------------------------------
+         🔥 UPDATE EXISTING DOCTOR
+      -------------------------------------------------------- */
+      const docRef = doc(db, "doctors", editDoctorId);
 
-    // Duplicate check
-    const [emailSnap, phoneSnap] = await Promise.all([
-      getDocs(query(doctorsRef, where('email', '==', email))),
-      getDocs(query(doctorsRef, where('phone', '==', phone)))
-    ]);
+      await updateDoc(docRef, {
+        name,
+        qualification,
+        department,
+        specialization,
+        email,
+        phone,
+        status,
+        availableDays,
+        timeSlots
+      });
 
-    if (!emailSnap.empty || !phoneSnap.empty) {
-      alert('❌ Doctor with same email or phone already exists!');
-      return;
+      alert(`✔ Doctor updated successfully!`);
+      addDoctorBtn.textContent = "Add Doctor";
+      editDoctorId = null;
+
+    } else {
+      /* -------------------------------------------------------
+         ➕ ADD NEW DOCTOR
+      -------------------------------------------------------- */
+      const doctorId = await generateDoctorId();
+
+      await addDoc(doctorsRef, {
+        doctorId,
+        name,
+        qualification,
+        department,
+        specialization,
+        email,
+        phone,
+        status,
+        availableDays,
+        timeSlots
+      });
+
+      alert(`✔ Doctor added successfully!`);
     }
 
-    const doctorId = await generateDoctorId();
-
-    const newDoctor = {
-      doctorId,
-      name,
-      qualification,
-      department,
-      specialization,
-      email,
-      phone,
-      availableDays: days,
-      timeSlots,
-      status
-    };
-
-    await addDoc(doctorsRef, newDoctor);
-    alert(`✅ Doctor ${name} added successfully!`);
     doctorForm.reset();
-    timeSlotsContainer.innerHTML = '';
+    timeSlotsContainer.innerHTML = "";
 
-  } catch (err) {
-    console.error('❌ Error adding doctor:', err);
-    alert('Error adding doctor: ' + err.message);
+  } catch (error) {
+    console.error(error);
+    alert("Error saving doctor.");
   }
 });
 
-// ✅ Live Auto-refresh Doctor List
-function setupLiveDoctorsListener() {
-  const doctorsRef = collection(db, 'doctors');
-  const q = query(doctorsRef, orderBy('doctorId', 'asc'));
-
+/* -------------------------------------------------------
+   LIVE DOCTOR LIST
+-------------------------------------------------------- */
+function loadDoctors() {
+  const q = query(collection(db, "doctors"), orderBy("doctorId"));
+  
   onSnapshot(q, (snapshot) => {
-    doctorsList.innerHTML = '';
+    doctorsList.innerHTML = "";
 
-    const search = searchName?.value?.trim().toLowerCase() || '';
-    const filterDept = filterDepartment?.value || '';
+    const search = searchName.value.trim().toLowerCase();
+    const departmentFilter = filterDepartment.value;
 
     snapshot.forEach(docSnap => {
       const data = docSnap.data();
+      const id = docSnap.id;
 
-      // Optional filters
-      if (filterDept && data.department !== filterDept) return;
+      if (departmentFilter && data.department !== departmentFilter) return;
       if (search && !data.name.toLowerCase().includes(search)) return;
 
-      const li = document.createElement('li');
+      const li = document.createElement("li");
+      li.classList.add("doctor-card");
+
+      // Status colors
+      let statusClass = "";
+      if (data.status === "Active") statusClass = "status-green";
+      else if (data.status === "Not Available") statusClass = "status-yellow";
+      else statusClass = "status-red";
+
+      li.classList.add(statusClass);
+
       li.innerHTML = `
-        <div class="meta">
-          <strong>${data.name}</strong> 
-          <span class="small">🆔 ${data.doctorId}</span>
-          <span class="small">${data.department}</span> 
-          <span class="small">${data.specialization}</span> 
-          <span class="small">${data.email}</span>
-          <span class="small">${data.phone}</span>
-          <span class="small">${data.status}</span>
+        <h3>${data.name}</h3>
+        <p><strong>ID:</strong> ${data.doctorId}</p>
+        <p><strong>Department:</strong> ${data.department}</p>
+        <p><strong>Specialization:</strong> ${data.specialization}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Phone:</strong> ${data.phone}</p>
+        <p><strong>Status:</strong> ${data.status}</p>
+
+        <div class="card-buttons">
+          <button class="edit-btn" data-id="${id}">Edit</button>
+          <button class="delete-btn" data-id="${id}">Delete</button>
         </div>
       `;
+
       doctorsList.appendChild(li);
     });
 
-    if (!snapshot.size) doctorsList.innerHTML = '<li>No doctors found.</li>';
+    if (!snapshot.size) {
+      doctorsList.innerHTML = "<p>No doctors found.</p>";
+    }
+
+    /* -------------------------------------------------------
+       EDIT BUTTON → PREFILL FORM
+    -------------------------------------------------------- */
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const docId = btn.dataset.id;
+        const docRef = doc(db, "doctors", docId);
+        const snap = await getDoc(docRef);
+        const data = snap.data();
+
+        editDoctorId = docId;
+        addDoctorBtn.textContent = "Update Doctor";
+
+        document.getElementById("docName").value = data.name;
+        document.getElementById("docQualification").value = data.qualification;
+        document.getElementById("docDepartment").value = data.department;
+        document.getElementById("docSpecialization").value = data.specialization;
+        document.getElementById("docEmail").value = data.email;
+        document.getElementById("docPhone").value = data.phone;
+        document.getElementById("docStatus").value = data.status;
+
+        // Days
+        document.querySelectorAll('input[name="availableDays"]').forEach(cb => {
+          cb.checked = data.availableDays.includes(cb.value);
+        });
+
+        // Time Slots
+        timeSlotsContainer.innerHTML = "";
+        data.timeSlots.forEach(slot => {
+          const div = document.createElement("div");
+          div.className = "slot-row";
+          div.innerHTML = `
+            <input type="time" class="fromTime" value="${slot.from}" />
+            <span>to</span>
+            <input type="time" class="toTime" value="${slot.to}" />
+            <button type="button" class="removeSlotBtn">✖</button>
+          `;
+          div.querySelector(".removeSlotBtn").addEventListener("click", () => div.remove());
+          timeSlotsContainer.appendChild(div);
+        });
+
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+    });
+
+    /* -------------------------------------------------------
+       DELETE BUTTON
+    -------------------------------------------------------- */
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        if (!confirm("Delete this doctor?")) return;
+        await deleteDoc(doc(db, "doctors", btn.dataset.id));
+        alert("Doctor deleted.");
+      });
+    });
   });
 }
 
-// ✅ Filter & Search
-filterDepartment?.addEventListener('change', setupLiveDoctorsListener);
-searchBtn?.addEventListener('click', setupLiveDoctorsListener);
-function renderDoctorsList(doctors) {
-  const tableBody = document.getElementById('doctorsTableBody');
-  const noMsg = document.getElementById('noDoctorsMsg');
+loadDoctors();
 
-  tableBody.innerHTML = '';
+/* -------------------------------------------------------
+   SEARCH AND FILTER
+-------------------------------------------------------- */
+filterDepartment.addEventListener("change", loadDoctors);
+searchBtn.addEventListener("click", loadDoctors);
 
-  if (doctors.length === 0) {
-    noMsg.classList.remove('hidden');
-    return;
-  }
-  noMsg.classList.add('hidden');
-
-  doctors.forEach(doc => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="border px-3 py-2">${doc.doctorId}</td>
-      <td class="border px-3 py-2">${doc.name}</td>
-      <td class="border px-3 py-2">${doc.qualification}</td>
-      <td class="border px-3 py-2">${doc.department}</td>
-      <td class="border px-3 py-2">${doc.specialization}</td>
-      <td class="border px-3 py-2">${doc.email}</td>
-      <td class="border px-3 py-2">${doc.phone}</td>
-      <td class="border px-3 py-2">${doc.availableDays?.join(', ') || '-'}</td>
-      <td class="border px-3 py-2">${doc.status}</td>
-      <td class="border px-3 py-2 text-center space-x-2">
-        <button class="editBtn bg-[#c49a6c] hover:bg-[#a77f54] text-white px-2 py-1 rounded" data-id="${doc.id}">Edit</button>
-        <button class="deleteBtn bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded" data-id="${doc.id}">Delete</button>
-      </td>
-    `;
-    tableBody.appendChild(tr);
-  });
-
-  // 📝 Edit Button
-  document.querySelectorAll('.editBtn').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const id = e.target.dataset.id;
-      alert('Edit feature coming soon for doctor ID: ' + id);
-      // Optional: Open modal with edit form
-    });
-  });
-
-  // 🗑️ Delete Button
-  document.querySelectorAll('.deleteBtn').forEach(btn => {
-    btn.addEventListener('click', async e => {
-      const id = e.target.dataset.id;
-      if (confirm('Are you sure you want to delete this doctor?')) {
-        await deleteDoc(doc(db, "doctors", id));
-        alert('Doctor deleted successfully!');
-        loadDoctors(); // refresh table
-      }
-    });
-  });
-}
-// Load initially
-setupLiveDoctorsListener();

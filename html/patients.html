@@ -31,42 +31,92 @@
 
     <!-- Add Patient -->
     <section class="card">
-      <h2>Add Patient</h2>
+      <h2>Add / Edit Patient</h2>
 
-      <form id="patientForm" class="form-group">
+      <form id="patientForm" class="form-group" autocomplete="off" novalidate>
 
-        <input type="text" id="patientId" placeholder="Patient ID" required />
-        <input type="text" id="patientName" placeholder="Patient Name" required />
-        <input type="number" id="patientAge" placeholder="Age" required />
+        <!-- Row 1 -->
+        <div class="field">
+          <label for="patientId">Patient ID *</label>
+          <input type="text" id="patientId" name="patientId" placeholder="Patient ID" required />
+          <div class="error" data-for="patientId"></div>
+        </div>
 
-        <select id="patientGender" required>
-          <option value="">Select Gender</option>
-          <option>Male</option>
-          <option>Female</option>
-          <option>Other</option>
-        </select>
+        <div class="field">
+          <label for="patientName">Patient Name *</label>
+          <input type="text" id="patientName" name="patientName" placeholder="Patient Name" required />
+          <div class="error" data-for="patientName"></div>
+        </div>
 
-        <input type="text" id="patientCondition" placeholder="Disease / Condition" required />
+        <!-- Row 2 -->
+        <div class="field">
+          <label for="patientAge">Age *</label>
+          <input type="number" id="patientAge" name="patientAge" placeholder="Age" min="0" required />
+          <div class="error" data-for="patientAge"></div>
+        </div>
 
-        <select id="patientStatus" required>
-          <option value="">Select Status</option>
-          <option>Immediate</option>
-          <option>Urgent</option>
-          <option>Expedited</option>
-        </select>
+        <div class="field">
+          <label for="patientGender">Gender *</label>
+          <select id="patientGender" name="patientGender" required>
+            <option value="">Select Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+          <div class="error" data-for="patientGender"></div>
+        </div>
 
-        <!-- NEW REFERRED BY DROPDOWN -->
-        <select id="referredBy" name="referredBy" required>
-    <option value="">Select Doctor</option>
-</select>
+        <!-- Row 3 -->
+        <div class="field">
+          <label for="patientCondition">Disease / Condition *</label>
+          <input type="text" id="patientCondition" name="patientCondition" placeholder="Disease / Condition" required />
+          <div class="error" data-for="patientCondition"></div>
+        </div>
 
-        <input type="email" id="patientEmail" placeholder="Email" />
-        <input type="text" id="patientPhone" placeholder="Phone Number" required />
+        <div class="field">
+          <label for="patientStatus">Status *</label>
+          <select id="patientStatus" name="patientStatus" required>
+            <option value="">Select Status</option>
+            <option>Immediate</option>
+            <option>Urgent</option>
+            <option>Expedited</option>
+          </select>
+          <div class="error" data-for="patientStatus"></div>
+        </div>
 
-        <label>Documents</label>
-      <input type="file" id="patientDoc" accept=".pdf,.jpg,.jpeg">
+        <!-- Row 4: referredBy + email -->
+        <div class="field">
+          <label for="referredBy">Referred By *</label>
+          <select id="referredBy" name="referredBy" required>
+            <option value="">Select Doctor</option>
+          </select>
+          <div class="error" data-for="referredBy"></div>
+        </div>
 
-        <button type="submit" id="addPatientBtn">Add Patient</button>
+        <div class="field">
+          <label for="patientEmail">Email</label>
+          <input type="email" id="patientEmail" name="patientEmail" placeholder="Email (optional)" />
+          <div class="error" data-for="patientEmail"></div>
+        </div>
+
+        <!-- Row 5: phone + doc -->
+        <div class="field">
+          <label for="patientPhone">Phone Number *</label>
+          <input type="tel" id="patientPhone" name="patientPhone" placeholder="10 digit phone number" maxlength="10" required />
+          <div class="error" data-for="patientPhone"></div>
+        </div>
+
+        <div class="field">
+          <label for="patientDoc">Documents (PDF / JPG)</label>
+          <input type="file" id="patientDoc" name="patientDoc" accept=".pdf,.jpg,.jpeg" />
+          <div class="error" data-for="patientDoc"></div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" id="addPatientBtn">Add Patient</button>
+          <button type="button" id="resetBtn" class="secondary">Reset</button>
+        </div>
+
       </form>
     </section>
 
@@ -90,7 +140,9 @@
     </section>
 
   </main>
-   <script type="module" src="../js/firebase-init.js"></script>
+
+  <!-- keep your firebase-init.js path (must export db) -->
+  <script type="module" src="../js/firebase-init.js"></script>
   <script type="module" src="../js/patients.js"></script>
 
 </body>

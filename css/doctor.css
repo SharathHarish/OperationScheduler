@@ -1,0 +1,273 @@
+/* ---------------------------------------------------------
+   ROOT COLORS (Same palette as patients.css)
+--------------------------------------------------------- */
+:root {
+  --bg: #f6f8fa;
+  --card: #fff;
+  --accent: #7b6611;
+  --muted: #666;
+  --error: #d9534f;
+}
+
+/* ---------------------------------------------------------
+   GLOBAL
+--------------------------------------------------------- */
+body {
+  background: var(--bg);
+  font-family: Inter, system-ui, sans-serif;
+  margin: 0;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 18px;
+}
+
+.card {
+  background: var(--card);
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+/* ---------------------------------------------------------
+   FORM CARD STYLING
+--------------------------------------------------------- */
+.form-card h2 {
+  margin-top: 0;
+  margin-bottom: 18px;
+}
+
+/* Each row contains 2 fields side-by-side */
+.row {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 15px;
+}
+
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.field label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+.field input,
+.field select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  background: #fff;
+  transition: 0.2s;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 5px rgba(123, 102, 17, 0.4);
+  outline: none;
+}
+
+/* ---------------------------------------------------------
+   INVALID FIELD RED OUTLINE
+--------------------------------------------------------- */
+.invalid {
+  border-color: var(--error) !important;
+  background: #ffe9e9 !important;
+}
+
+/* ---------------------------------------------------------
+   FIELDSETS (Available Days / Time Slots)
+--------------------------------------------------------- */
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+legend {
+  font-weight: 600;
+  padding: 0 6px;
+}
+
+/* Days checkbox row */
+.days-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.days-checkboxes label {
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------
+   TIME SLOT BUTTON & CONTAINER
+--------------------------------------------------------- */
+#timeSlotsContainer {
+  margin-bottom: 10px;
+}
+
+.time-slot-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.time-slot-box input {
+  flex: 1;
+  padding: 9px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.removeSlotBtn {
+  background: #cc0000;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.slot-btn {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.slot-btn:hover {
+  box-shadow: 0 0 10px rgba(120, 135, 11, 0.45);
+}
+
+/* ---------------------------------------------------------
+   SUBMIT BUTTON
+--------------------------------------------------------- */
+.submit-btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.submit-btn:hover {
+  box-shadow: 0 0 10px rgba(120, 135, 11, 0.45);
+}
+
+/* ---------------------------------------------------------
+   DOCTOR LIST FILTER PANEL
+--------------------------------------------------------- */
+.filter-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.filter-row input,
+.filter-row select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.search-btn {
+  background: var(--accent);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: 0.25s;
+}
+
+.search-btn:hover {
+  box-shadow: 0 0 10px rgba(120, 135, 11, 0.45);
+}
+
+/* ---------------------------------------------------------
+   DOCTOR LIST STYLING
+--------------------------------------------------------- */
+.list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.doctor-card {
+  background: #fff;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* Status colors */
+.status-active {
+  border-left: 5px solid #2ecc71; /* Green */
+}
+
+.status-resigned {
+  border-left: 5px solid #ff3b30; /* Red */
+}
+
+.status-retired {
+  border-left: 5px solid #808080; /* Grey */
+}
+
+.status-notavailable {
+  border-left: 5px solid #f1c40f; /* Yellow */
+}
+
+/* Buttons inside card */
+.edit-btn, .delete-btn {
+  padding: 8px 13px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.edit-btn { background: #0066cc; }
+.delete-btn { background: #cc0000; }
+
+/* ---------------------------------------------------------
+   RESPONSIVE DESIGN
+--------------------------------------------------------- */
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+
+  fieldset {
+    padding: 12px;
+  }
+
+  .submit-btn {
+    font-size: 15px;
+  }
+}
