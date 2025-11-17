@@ -210,14 +210,17 @@ function renderPatients(filter = "") {
 
     const info = document.createElement("div");
     info.className = "patient-info";
-    info.innerHTML = `
-      <strong>${p.name || "Unnamed"}</strong> <span style="color:#777">(${p.id})</span><br>
-      Age: ${p.age || "N/A"} • Gender: ${p.gender || "N/A"}<br>
-      Status: <span class="status-label">${p.status || "Unknown"}</span> • Condition: ${p.condition || "N/A"}<br>
-      Referred By: <b>${p.referredBy || "N/A"}</b><br>
-      Contact: ${p.phone || "N/A"} • ${p.email ? `<span style="color:#666">${p.email}</span>` : ""}
-      <div style="margin-top:6px">${p.docs ? `<a href="${p.docs}" target="_blank">View Document</a>` : "No Document"}</div>
-    `;
+  info.innerHTML = `
+  <div style="font-size:14px; line-height:1.6;">
+    <div>Patient Name: <strong>${p.name || "Unnamed"}</strong> <span style="color:#777">(${p.patientId || p.id})</span></div>
+    <div>Age: ${p.age || "N/A"}</div> <div> Gender: ${p.gender || "N/A"}</div>
+    <div>Condition: ${p.condition || "N/A"}</div>
+    <div>Status: <span class="status-label">${p.status || "Unknown"}</span></div>
+    <div>Referred By: ${p.referredBy || "N/A"}</div>
+    <div>Contact: ${p.phone || "N/A"}${p.email ? ` • <span style="color:#666">${p.email}</span>` : ""}</div>
+    <div>${p.docs ? `<a href="${p.docs}" target="_blank">View Document</a>` : "No Document"}</div>
+  </div>
+`;
 
     const actions = document.createElement("div");
     actions.className = "patient-actions";
@@ -390,14 +393,25 @@ list.addEventListener("click", async (e) => {
   }
 });
 
-// Schedule handler (button navigates to operation page)
-document.addEventListener("click", (e) => {
-  if (e.target.classList.contains("schedule-btn")) {
-    const id = e.target.getAttribute("data-id");
-    window.location.href = `operation.html?patientId=${encodeURIComponent(id)}`;
-  }
+// Scroll to Add Patient section
+document.getElementById("scrollToAddPatientBtn")?.addEventListener("click", () => {
+    const section = document.getElementById("aoperation");
+    if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+    } else {
+        console.warn("Add Patient section not found");
+    }
 });
 
+// Scroll to Scheduled Operations section
+document.getElementById("scrollToSBtn")?.addEventListener("click", () => {
+    const section = document.getElementById("soperation");
+    if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+    } else {
+        console.warn("Scheduled Operations section not found");
+    }
+});
 // -----------------------------
 // Filters & search
 // -----------------------------

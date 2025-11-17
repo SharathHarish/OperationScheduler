@@ -17,9 +17,8 @@
       <div class="dropdown">
         <button class="dropbtn">Manage ▼</button>
         <div class="dropdown-content">
-          <a href="doctor.html">Doctor</a>
+          <a href="doctors.html">Doctor</a>
           <a href="patients.html">Patient</a>
-          <a href="operation.html">Operation</a>
         </div>
       </div>
 
@@ -30,9 +29,11 @@
   <main class="container">
 
     <!-- Add Patient -->
-    <section class="card">
+    <section class="card" id="aoperation">
       <h2>Patient</h2>
-
+        <div class="form-actions">
+     <button type="button" id="scrollToSBtn">Schedule Operation</button>
+     </div>
       <form id="patientForm" class="form-group" autocomplete="off" novalidate>
 
         <!-- Row 1 -->
@@ -121,8 +122,11 @@
     </section>
 
     <!-- Patients List -->
-    <section class="card">
+    <section class="card" id="soperation">
       <h2>Patients List</h2>
+        <div class="form-actions">
+        <button type="button" id="scrollToAddPatientBtn">Add another patient</button>
+        </div>
 
       <div class="filter-row">
         <select id="filterStatus">
