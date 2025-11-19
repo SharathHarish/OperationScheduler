@@ -391,6 +391,13 @@ list.addEventListener("click", async (e) => {
       showDialog("error", "Delete Failed", "Could not delete patient.");
     }
   }
+  if (e.target.classList.contains("schedule-btn")) {
+  const patientId = e.target.dataset.id;
+
+  // Redirect with patientId in URL
+  window.location.href = `operation.html?patientId=${patientId}`;
+  return;
+}
 });
 
 // Scroll to Add Patient section
