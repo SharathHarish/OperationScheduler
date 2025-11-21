@@ -6,31 +6,48 @@
   <title>Hospital Scheduler</title>
   <link rel="stylesheet" href="../css/login.css">
 </head>
+
 <body>
+
+  <!-- Same as login.html -->
+  <div id="include-header"></div>
+
   <div class="login-container">
-    <h3>Patient Registration</h3>
-   <label for="registerPID">Patient ID</label>
-  <input type="text" id="registerPID" placeholder="Enter Patient ID" readonly>
-  <label for="registerEmail" readonly>Email</label>
-  <input type="email" id="registerEmail" placeholder="Enter Email" readonly>
-<label for="registerPassword">Password</label>
-  <input type="password" id="registerPassword" placeholder="Enter Password">
-  <label for="registerPassword">Confirm Password</label>
-  <input type="password" id="cregisterPassword" placeholder="Enter Password">
+    <h2>Patient Registration</h2>
+
+    <label for="registerPID">Patient ID</label>
+    <input type="text" id="registerPID" placeholder="Enter Patient ID" readonly>
+
+    <label for="registerEmail">Email</label>
+    <input type="email" id="registerEmail" placeholder="Enter Email" readonly>
+
+    <label for="registerPassword">Password</label>
+    <input type="password" id="registerPassword" placeholder="Enter Password">
+
+    <label for="cregisterPassword">Confirm Password</label>
+    <input type="password" id="cregisterPassword" placeholder="Confirm Password">
+
     <button id="registerBtn">Register</button>
   </div>
 
-  <script type="module" src="js/regauth.js"></script>
+  <!-- Same placement as login.html -->
+  <script type="module" src="../js/regauth.js"></script>
+
 </body>
+  <div id="include-footer"></div>
+
+<!-- EXACT same include system as login.html -->
 <script>
-    async function includeHTML(id, file) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const response = await fetch(file);
-      const html = await response.text();
-      el.innerHTML = html;
-    }
-    includeHTML("include-header", "header.html");
-    includeHTML("include-footer", "footer.html");
-  </script>
+  async function includeHTML(id, file) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const response = await fetch(file);
+    const html = await response.text();
+    el.innerHTML = html;
+  }
+
+  includeHTML("include-header", "header.html");
+  includeHTML("include-footer", "footer.html");
+</script>
+
 </html>

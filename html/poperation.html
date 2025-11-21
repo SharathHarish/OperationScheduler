@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Operation Scheduling | Admin</title>
+
+  <!-- Main theme -->
+  <link rel="stylesheet" href="../css/patients.css" />
+  <link rel="stylesheet" href="../css/operation.css" />
+</head>
+
+<body>
+  <!-- HEADER INCLUDE -->
+  <div id="header"></div>
+
+  <!-- MAIN CONTENT -->
+  <main>
+    <section class="card">
+      <h2>Scheduled Operations</h2>
+
+      <div class="filter-row">
+        <input type="date" id="filterDate" />
+        <input type="text" id="filterPatient" placeholder="Search by patient ID or name" />
+        <button id="searchScheduleBtn">Search</button>
+      </div>
+
+      <ul id="schedulesList" class="list"></ul>
+    </section>
+  </main>
+
+  <!-- FOOTER INCLUDE -->
+  <div id="footer"></div>
+
+  <!-- JS -->
+ <script>
+  async function includeHTML(id, file) {
+    try {
+      const html = await fetch(file).then(r => r.text());
+      document.getElementById(id).innerHTML = html;
+    } catch (e) {
+      console.error("Include error:", file, e);
+    }
+  }
+
+  // Load header and footer first
+  Promise.all([
+    includeHTML("header", "pheader.html"),
+    includeHTML("footer", "footer.html")
+  ]).then(() => {
+    // Load logout script only after header is ready
+    import('../js/logout.js');
+  });
+</script>
+</body>
+</html>
