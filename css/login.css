@@ -4,7 +4,7 @@
 
 /* ---- Variables (Match vision.css palette) ---- */
 :root {
-  --accent: #2e86de;
+  --accent: #8a6d2f;
   --bg: #f7f7f9;
   --text: #222;
   --muted: #555;
@@ -94,7 +94,7 @@ body {
 }
 
 #loginBtn:hover {
-  background-color: #1d6fc1;
+  background-color: #8a6d2f;
   transform: translateY(-1px);
 }
 

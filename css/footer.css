@@ -1,6 +1,6 @@
 /* FOOTER MAIN */
 .footer {
-  background: #000000;
+  background: #8a6d2f;
   color: #f6f3f3;
   padding-top: 40px;
   margin-top: 60px;
@@ -22,17 +22,19 @@
 .footer-section {
   flex: 1;
   min-width: 220px;
+  
 }
 
 /* Logo Section */
 .footer-logo img {
   width: 140px;
   margin-bottom: 10px;
+  background: #ffffff;
 }
 
 .footer-logo p {
   font-size: 14px;
-  opacity: 0.8;
+  opacity: 0.9;
   margin-top: 8px;
 }
 
@@ -40,7 +42,7 @@
 .footer-links h4,
 .footer-contact h4 {
   font-size: 18px;
-  color: #d57719;
+  color: #f2f0f2;
   margin-bottom: 12px;
 }
 
