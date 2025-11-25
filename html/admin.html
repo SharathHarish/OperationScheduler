@@ -4,9 +4,17 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin Dashboard - Hospital Scheduler</title>
+
+  <!-- Your existing admin CSS -->
   <link rel="stylesheet" href="../css/admin.css">
+
+  <!-- Page-only styling -->
+  <link rel="stylesheet" href="../css/admin-welcome.css">
 </head>
+
 <body>
+
+  <!-- KEEPING YOUR EXISTING HEADER -->
   <header class="topbar">
     <h1>Artemis Hospitals — The Hospital Operations Manager</h1>
     <div class="top-actions">
@@ -15,51 +23,21 @@
     </div>
   </header>
 
-  <main class="container">
-    <!-- Manage Doctors -->
-    <section class="card">
-      <h2>Manage Doctor Details</h2>
-      <div class="form-row">
-        <input id="docName" type="text" placeholder="Doctor Name" />
-        <input id="docSpecialty" type="text" placeholder="Specialty" />
-        <button id="addDoctorBtn">Add Doctor</button>
-      </div>
-      <ul id="doctorsList" class="list"></ul>
-    </section>
+  <main>
+    <section class="welcome-card">
+      <h2>Welcome, Admin 👋</h2>
+      <p>Manage the hospital operations efficiently using the quick access modules below.</p>
 
-    <!-- Manage Patients -->
-    <section class="card">
-      <h2>Manage Patient Details</h2>
-      <div class="form-row">
-        <!-- search by patient id or name (optional) -->
-        <input id="patientSearch" type="text" placeholder="Search by name or patientId" />
-        <button id="refreshPatientsBtn">Refresh</button>
+      <div class="quick-links">
+        <a class="qlink" href="doctors.html">Manage Doctors</a>
+        <a class="qlink" href="patients.html">Manage Patients</a>
+        <a class="qlink" href="operation.html">Operation Schedules</a>
       </div>
-      <ul id="patientsList" class="list"></ul>
-    </section>
-
-    <!-- Post Operation Schedules -->
-    <section class="card">
-      <h2>Post Operation Schedule Details</h2>
-      <div class="form-grid">
-        <input id="schedDate" type="date" />
-        <input id="schedStart" type="time" />
-        <input id="schedEnd" type="time" />
-        <input id="schedOT" type="text" placeholder="Operation Theater ID" />
-        <input id="schedSurgeon" type="text" placeholder="Surgeon (Doctor UID or Name)" />
-        <input id="schedAnes" type="text" placeholder="Anesthesiologist" />
-        <input id="schedPatientId" type="text" placeholder="Patient UID or patientId" />
-        <input id="schedRemarks" type="text" placeholder="Remarks / Materials needed" />
-      </div>
-      <div class="form-row">
-        <button id="addScheduleBtn">Add Schedule</button>
-      </div>
-
-      <h3>Scheduled Operations</h3>
-      <ul id="schedulesList" class="list"></ul>
     </section>
   </main>
 
-  <script type="module" src="js/admin.js"></script>
+  <!-- JS -->
+  <script type="module" src="js/logout.js"></script>
+  <script type="module" src="js/admin-welcome.js"></script>
 </body>
 </html>
