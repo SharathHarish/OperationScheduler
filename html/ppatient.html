@@ -3,45 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patient Management | Admin</title>
-  <link rel="stylesheet" href="../css/patients.css" />
+  <title>Patients | Admin Dashboard</title>
+  <link rel="stylesheet" href="../css/header.css" />
 </head>
 
 <body>
-    <!-- Patients List -->
-    <section class="card" id="soperation">
-      <h2>Patients List</h2>
-        <div class="form-actions">
-        </div>
-      </div>
 
-      <ul id="patientsList" class="list"></ul>
+  <!-- Header -->
+  <div id="header"></div>
+
+  <main class="main-container">
+
+    <section class="patients-section card">
+      <h2>Patients</h2>
+
+      <ul id="patientsList" class="patients-list"></ul>
     </section>
 
   </main>
 
-  <!-- keep your firebase-init.js path (must export db) -->
-  <script type="module" src="../js/firebase-init.js"></script>
-  <script type="module" src="../js/patients.js"></script>
- <!-- JS -->
- <script>
-  async function includeHTML(id, file) {
-    try {
-      const html = await fetch(file).then(r => r.text());
-      document.getElementById(id).innerHTML = html;
-    } catch (e) {
-      console.error("Include error:", file, e);
-    }
-  }
+  <!-- Footer -->
+  <div id="footer"></div>
 
-  // Load header and footer first
-  Promise.all([
-    includeHTML("header", "pheader.html"),
-    includeHTML("footer", "footer.html")
-  ]).then(() => {
-    // Load logout script only after header is ready
-    import('../js/logout.js');
-  });
-</script>
+  <!-- Firebase + JS -->
+  <script type="module" src="../js/firebase-init.js"></script>
+  <script type="module" src="../js/ppatient.js"></script>
+
+  <!-- HTML include logic -->
+  <script>
+    async function includeHTML(id, file) {
+      try {
+        const html = await fetch(file).then((res) => res.text());
+        document.getElementById(id).innerHTML = html;
+      } catch (err) {
+        console.error("Include error:", file, err);
+      }
+    }
+
+    Promise.all([
+      includeHTML("header", "pheader.html"),
+      includeHTML("footer", "footer.html")
+    ]).then(() => {
+      import("../js/logout.js");
+    });
+  </script>
 </body>
 </html>

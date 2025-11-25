@@ -1,0 +1,27 @@
+.operation-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.operation-table th,
+.operation-table td {
+  border: 2px solid #8b6a10; /* brown border */
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.operation-table th {
+  background: #f5e6c4; /* light brown */
+  color: #5a4305;
+  font-weight: 700;
+}
+
+.operation-table tbody tr:nth-child(even) {
+  background: #fff8e6; /* mild cream */
+}
+
+.operation-table tbody tr:hover {
+  background: #f1e9d7;
+}

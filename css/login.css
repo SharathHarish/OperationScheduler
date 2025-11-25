@@ -26,6 +26,65 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+  z-index: 9999;
+}
+
+.popup-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-box {
+  background: #fff;
+  width: 310px;
+  padding: 18px 22px;
+  border-radius: 12px;
+  text-align: center;
+  transform: translateY(-20px);
+  transition: transform .25s ease;
+  animation: popIn .25s ease forwards;
+}
+
+.popup-box.success { border-left: 6px solid #28c76f; }
+.popup-box.error   { border-left: 6px solid #ea5455; }
+
+.popup-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.popup-message {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 14px;
+}
+
+.popup-btn {
+  padding: 6px 16px;
+  background: #7367f0;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+@keyframes popIn {
+  from { transform: scale(.85); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+
 
 /* ---- Header Include ---- */
 #include-header {

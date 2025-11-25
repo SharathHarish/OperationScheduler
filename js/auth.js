@@ -1,53 +1,101 @@
 import { auth, db } from './firebase-init.js';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
-import { doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
+import { 
+    signInWithEmailAndPassword 
+} from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+import { doc, getDoc, collection, query, where, getDocs } 
+    from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
-// Login
+// --------------------------
+// 🔹 Dialog Box
+// --------------------------
+function showDialog(type = "success", title = "Success", message = "") {
+    const overlay = document.createElement("div");
+    overlay.className = "popup-overlay";
+
+    const box = document.createElement("div");
+    box.className = `popup-box ${type}`;
+    box.innerHTML = `
+        <div class="popup-title">${title}</div>
+        <div class="popup-message">${message}</div>
+        <button class="popup-btn">OK</button>
+    `;
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+    setTimeout(() => overlay.classList.add("show"), 20);
+
+    box.querySelector(".popup-btn").onclick = () => {
+        overlay.classList.remove("show");
+        setTimeout(() => overlay.remove(), 200);
+    };
+
+    setTimeout(() => {
+        if (document.body.contains(overlay)) {
+            overlay.classList.remove("show");
+            setTimeout(() => overlay.remove(), 200);
+        }
+    }, 3000);
+}
+
+// --------------------------
+// 🔹 LOGIN
+// --------------------------
 document.getElementById('loginBtn').addEventListener('click', async () => {
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+
+    if (!email || !password) {
+        showDialog("error", "Missing Fields", "Email and Password are required.");
+        return;
+    }
 
     try {
+        // 🔹 Firebase Auth sign-in
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Get user role from Firestore
-        const docRef = doc(db, "users", user.uid);
-        const docSnap = await getDoc(docRef);
+        // 🔹 Get role from users collection
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
 
-        if(docSnap.exists()){
-            const role = docSnap.data().role;
-            if(role === 'admin'){
-                window.location.href = 'admin.html';
-            } else {
-                window.location.href = 'user.html';
-            }
-        } else {
-            alert('No role assigned. Contact admin.');
+        if (!userDocSnap.exists()) {
+            showDialog("error", "Role Missing", "No role assigned. Contact admin.");
+            return;
         }
-    } catch(err) {
-        alert('Login Error: ' + err.message);
-    }
-});
 
-// Register
-document.getElementById('registerBtn').addEventListener('click', async () => {
-    const email = document.getElementById('registerEmail').value;
-    const password = document.getElementById('registerPassword').value;
-    const role = document.getElementById('role').value;
+        const role = userDocSnap.data().role;
 
-    try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
+        // 🔹 If patient, get patientId from patients collection
+        let patientId = null;
+        if (role === "patient") {
+            const patientsQuery = query(collection(db, "patients"), where("email", "==", email));
+            const querySnapshot = await getDocs(patientsQuery);
 
-        // Save role in Firestore
-        await setDoc(doc(db, "users", user.uid), {
-            email: email,
-            role: role
-        });
+            if (!querySnapshot.empty) {
+                patientId = querySnapshot.docs[0].data().patientId;
+                sessionStorage.setItem("patientId", patientId);
+            } else {
+                showDialog("error", "Patient Not Found", "No patient record found for this email.");
+                return;
+            }
+        }
 
-        alert('Registration successful!');
-    } catch(err) {
-        alert('Registration Error: ' + err.message);
+        // 🔹 Store session info
+        sessionStorage.setItem("userRole", role);
+        sessionStorage.setItem("userEmail", email);
+        sessionStorage.setItem("userId", user.uid);
+
+        // 🔹 Redirect based on role
+        showDialog("success", "Login Successful", "Redirecting…");
+        setTimeout(() => {
+            if (role === 'admin') 
+                window.location.href = 'admin.html';
+            else if (role === 'patient') 
+                window.location.href = 'poperation.html';
+            else 
+                window.location.href = 'user.html';
+        }, 800);
+
+    } catch (err) {
+        showDialog("error", "Login Failed", err.message.replace("Firebase:", ""));
     }
 });

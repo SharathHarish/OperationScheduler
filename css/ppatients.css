@@ -1,0 +1,71 @@
+/* Global */
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  background: #f5f6fa;
+  color: #333;
+}
+
+/* Layout */
+.main-container {
+  margin-left: 260px; /* space for sidebar */
+  padding: 30px;
+}
+
+/* Card style */
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 25px 30px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Heading */
+.card h2 {
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Patients List */
+.patients-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.patient-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-left: 6px solid #4c6ef5;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.patient-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.patient-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.patient-label {
+  font-weight: 600;
+  color: #555;
+}
+
+.patient-value {
+  color: #111;
+}
+
+/* Status color example */
+.status-admitted { border-left-color: #2ecc71; }
+.status-critical { border-left-color: #e74c3c; }
+.status-discharged { border-left-color: #f1c40f; }

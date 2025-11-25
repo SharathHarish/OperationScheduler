@@ -7,7 +7,7 @@
 
   <!-- Main theme -->
   <link rel="stylesheet" href="../css/patients.css" />
-  <link rel="stylesheet" href="../css/operation.css" />
+  <link rel="stylesheet" href="../css/poperation.css" />
 </head>
 
 <body>
@@ -16,21 +16,16 @@
 
   <!-- MAIN CONTENT -->
   <main>
-    <section class="card">
-      <h2>Scheduled Operations</h2>
-
-      <div class="filter-row">
-        <input type="date" id="filterDate" />
-        <input type="text" id="filterPatient" placeholder="Search by patient ID or name" />
-        <button id="searchScheduleBtn">Search</button>
-      </div>
-
-      <ul id="schedulesList" class="list"></ul>
-    </section>
+   <section class="card">
+  <h2>Your Surgery Schedule</h2>
+  <div id="operationList"></div>
+</section>
   </main>
 
   <!-- FOOTER INCLUDE -->
   <div id="footer"></div>
+  <script type="module" src="../js/firebase-init.js"></script>
+  <script type="module" src="../js/poperation.js"></script>
 
   <!-- JS -->
  <script>
