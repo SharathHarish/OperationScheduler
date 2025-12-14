@@ -1,7 +1,5 @@
 import { auth, db } from './firebase-init.js';
-import { 
-    signInWithEmailAndPassword 
-} from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 import { doc, getDoc, collection, query, where, getDocs } 
     from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
 
@@ -53,7 +51,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // 🔹 Get role from users collection
+        // 🔹 Get user document from "users" collection
         const userDocRef = doc(db, "users", user.uid);
         const userDocSnap = await getDoc(userDocRef);
 
@@ -62,27 +60,24 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
             return;
         }
 
-        const role = userDocSnap.data().role;
+        const userData = userDocSnap.data();
+        const role = userData.role;
+        const userId = userData.userId; // This is the patientId from users collection
+        sessionStorage.setItem("userId", userId); // Store userId in sessionStorage
 
-        // 🔹 If patient, get patientId from patients collection
-        let patientId = null;
+        // 🔹 If patient, verify patient exists in patients collection
         if (role === "patient") {
             const patientsQuery = query(collection(db, "patients"), where("email", "==", email));
             const querySnapshot = await getDocs(patientsQuery);
 
             if (!querySnapshot.empty) {
-                patientId = querySnapshot.docs[0].data().patientId;
-                sessionStorage.setItem("patientId", patientId);
+                const patientData = querySnapshot.docs[0].data();
+                sessionStorage.setItem("patientId", patientData.patientId);
             } else {
                 showDialog("error", "Patient Not Found", "No patient record found for this email.");
                 return;
             }
         }
-
-        // 🔹 Store session info
-        sessionStorage.setItem("userRole", role);
-        sessionStorage.setItem("userEmail", email);
-        sessionStorage.setItem("userId", user.uid);
 
         // 🔹 Redirect based on role
         showDialog("success", "Login Successful", "Redirecting…");
@@ -90,12 +85,12 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
             if (role === 'admin') 
                 window.location.href = 'admin/admin.html';
             else if (role === 'patient') 
-                window.location.href = 'poperation.html';
+                window.location.href = 'patient/poperation.html';
             else 
                 window.location.href = 'user.html';
         }, 800);
 
     } catch (err) {
-        showDialog("error", "Login Failed", err.message.replace("Firebase:", ""));
+        showDialog("error", "Login Failed", err.message.replace("Firebase:", "").trim());
     }
 });

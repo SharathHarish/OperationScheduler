@@ -5,6 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hospital Scheduler</title>
   <link rel="stylesheet" href="assets/css/login.css">
+
+  <style>
+    /* Marquee Styles */
+    .marquee-container {
+      width: 100%;
+      overflow: hidden;
+      background-color: #fff3cd; /* soft yellow warning color */
+      border: 1px solid #ffeeba;
+      padding: 5px 0;
+      box-sizing: border-box;
+    }
+
+    .marquee-text {
+      display: inline-block;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #856404; /* dark yellow/brown */
+      animation: marquee 15s linear infinite;
+    }
+
+    .marquee-container:hover .marquee-text {
+      animation-play-state: paused; /* pause on hover */
+    }
+
+    @keyframes marquee {
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+  </style>
 </head>
 
 <body>
@@ -12,11 +41,18 @@
   <!-- Same as login.html -->
   <div id="include-header"></div>
 
+  <!-- Marquee -->
+  <div class="marquee-container">
+    <p class="marquee-text">
+      ⚠️ Kindly register only if you have a surgery scheduled.
+    </p>
+  </div>
+
   <div class="login-container">
     <h2>Patient Registration</h2>
 
     <label for="registerEmail">Email</label>
-    <input type="email" id="registerEmail" placeholder="Enter Email" readonly>
+    <input type="email" id="registerEmail" placeholder="Enter Email">
 
     <label for="registerPassword">Password</label>
     <input type="password" id="registerPassword" placeholder="Enter Password">
@@ -28,23 +64,23 @@
   </div>
 
   <!-- Same placement as login.html -->
-  <script type="module" src="../assets/js/firebase/regauth.js"></script>
+  <script type="module" src="assets/js/firebase/regauth.js"></script>
 
-</body>
   <div id="include-footer"></div>
 
-<!-- EXACT same include system as login.html -->
-<script>
-  async function includeHTML(id, file) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const response = await fetch(file);
-    const html = await response.text();
-    el.innerHTML = html;
-  }
+  <!-- EXACT same include system as login.html -->
+  <script>
+    async function includeHTML(id, file) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const response = await fetch(file);
+      const html = await response.text();
+      el.innerHTML = html;
+    }
 
-  includeHTML("include-header", "header.html");
-  includeHTML("include-footer", "footer.html");
-</script>
+    includeHTML("include-header", "header.html");
+    includeHTML("include-footer", "footer.html");
+  </script>
 
+</body>
 </html>

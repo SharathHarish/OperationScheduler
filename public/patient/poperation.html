@@ -6,8 +6,8 @@
   <title>Operation Scheduling | Admin</title>
 
   <!-- Main theme -->
-  <link rel="stylesheet" href="../css/patients.css" />
-  <link rel="stylesheet" href="../css/poperation.css" />
+  <link rel="stylesheet" href="../assets/css/patients.css" />
+  <link rel="stylesheet" href="../assets/css/poperation.css" />
 </head>
 
 <body>
@@ -24,8 +24,8 @@
 
   <!-- FOOTER INCLUDE -->
   <div id="footer"></div>
-  <script type="module" src="../js/firebase-init.js"></script>
-  <script type="module" src="../js/poperation.js"></script>
+  <script type="module" src="../assets/js/firebase/firebase-init.js"></script>
+  <script type="module" src="../assets/js/patient/poperation.js"></script>
 
   <!-- JS -->
  <script>
@@ -41,7 +41,7 @@
   // Load header and footer first
   Promise.all([
     includeHTML("header", "pheader.html"),
-    includeHTML("footer", "footer.html")
+    includeHTML("footer", "pfooter.html")
   ]).then(() => {
     // Load logout script only after header is ready
     import('../js/logout.js');

@@ -1,4 +1,4 @@
-import { db } from "./firebase-init.js";
+import { db } from "../firebase/firebase-init.js";
 import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 // ---------------------------------------------------------
