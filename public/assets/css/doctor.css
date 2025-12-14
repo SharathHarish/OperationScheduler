@@ -291,7 +291,61 @@ legend {
 
 .edit-btn:hover { background: #1e40af; }
 .delete-btn:hover { background: #991b1b; }
+/* =====================================
+   FIX FORM DISORDER / ALIGNMENT
+===================================== */
 
+/* Force vertical alignment inside each field */
+.form-card .field {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch;
+}
+
+/* Ensure labels are block-level */
+.form-card .field label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+
+/* Inputs and selects full width */
+.form-card .field input,
+.form-card .field select {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix row alignment */
+.form-card .row {
+  align-items: flex-end;   /* aligns fields evenly */
+}
+
+/* Fix checkboxes layout */
+.days-checkboxes {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+}
+
+.days-checkboxes label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+/* Fix Time Slot button alignment */
+.slot-btn {
+  margin-top: 8px;
+}
+
+/* Prevent inputs from shrinking */
+.form-card input,
+.form-card select {
+  min-width: 0;
+}
 /* ---------------------------------------------------------
    RESPONSIVE DESIGN
 --------------------------------------------------------- */

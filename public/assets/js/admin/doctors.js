@@ -1,17 +1,8 @@
 import { db, auth } from '../firebase/firebase-init.js';
 import {
-  collection,
-  addDoc,
-  getDocs,
-  getDoc,
-  doc,
-  updateDoc,
-  deleteDoc,
-  query,
-  onSnapshot,
-  orderBy
+  collection, addDoc, getDocs, getDoc, doc, updateDoc, deleteDoc,
+  query, onSnapshot, orderBy
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
 import { signOut } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 
 /* -------------------------------------------------------
@@ -21,16 +12,11 @@ const doctorForm = document.getElementById("doctorForm");
 const addDoctorBtn = document.getElementById("addDoctorBtn");
 const addSlotBtn = document.getElementById("addSlotBtn");
 const timeSlotsContainer = document.getElementById("timeSlotsContainer");
-
-const doctorsList = document.getElementById("doctorsList"); // <tbody>
-
+const doctorsList = document.getElementById("doctorsList");
 const filterDepartment = document.getElementById("filterDepartment");
 const searchName = document.getElementById("searchName");
 const searchBtn = document.getElementById("searchBtn");
 
-/* -------------------------------------------------------
-   GLOBAL VARIABLES
--------------------------------------------------------- */
 let editDoctorId = null;
 
 /* -------------------------------------------------------
@@ -66,17 +52,17 @@ addSlotBtn.addEventListener("click", () => {
    DEPARTMENT – SPECIALIZATION MAP
 -------------------------------------------------------- */
 const departmentSpecializationMap = {
-  "Cardiology": ["Cardiologist"],
-  "Neurology": ["Neurologist"],
-  "Orthopedics": ["Orthopedic Surgeon"],
-  "Gastroenterology": ["Gastroenterologist"],
-  "Oncology": ["Oncologist"],
-  "Pediatrics": ["Pediatrician"],
-  "Urology": ["Urologist"],
-  "Dermatology": ["Dermatologist"],
-  "ENT": ["ENT Specialist"],
-  "Anesthesiology": ["Anesthesiologist"],
-  "General Surgery": ["General Surgeon"]
+  "Cardiology":["Cardiologist"],
+  "Neurology":["Neurologist"],
+  "Orthopedics":["Orthopedic Surgeon"],
+  "Gastroenterology":["Gastroenterologist"],
+  "Oncology":["Oncologist"],
+  "Pediatrics":["Pediatrician"],
+  "Urology":["Urologist"],
+  "Dermatology":["Dermatologist"],
+  "ENT":["ENT Specialist"],
+  "Anesthesiology":["Anesthesiologist"],
+  "General Surgery":["General Surgeon"]
 };
 
 /* -------------------------------------------------------
@@ -94,6 +80,7 @@ async function generateDoctorId() {
 doctorForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  const doctorId = document.getElementById("docId").value.trim();
   const name = document.getElementById("docName").value.trim();
   const qualification = document.getElementById("docQualification").value;
   const department = document.getElementById("docDepartment").value;
@@ -102,61 +89,91 @@ doctorForm.addEventListener("submit", async (e) => {
   const phone = document.getElementById("docPhone").value.trim();
   const status = document.getElementById("docStatus").value;
 
-  const availableDays = Array.from(
-    document.querySelectorAll('input[name="availableDays"]:checked')
-  ).map(d => d.value);
+  // ---------- REQUIRED FIELDS ----------
+  if (!doctorId || !name || !email || !phone) {
+    alert("Doctor ID, Name, Email, and Phone are required!");
+    return;
+  }
 
-  const timeSlots = Array.from(
-    document.querySelectorAll(".slot-row")
-  ).map(row => ({
+  if (!qualification || !department || !specialization || !status) {
+    alert("Please select all dropdowns!");
+    return;
+  }
+
+  // ---------- EMAIL PATTERN VALIDATION ----------
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailPattern.test(email)) {
+    alert("Please enter a valid email address.");
+    return;
+  }
+
+  // ---------- PHONE PATTERN VALIDATION ----------
+  const phonePattern = /^[6-9]\d{9}$/;
+  if (!phonePattern.test(phone)) {
+    alert("Please enter a valid 10-digit Indian mobile number.");
+    return;
+  }
+
+  // ---------- AT LEAST ONE DAY ----------
+  const availableDays = Array.from(document.querySelectorAll('input[name="availableDays"]:checked')).map(d => d.value);
+  if (availableDays.length === 0) {
+    alert("Please select at least one available day.");
+    return;
+  }
+
+  // ---------- AT LEAST ONE TIME SLOT ----------
+  const timeSlots = Array.from(document.querySelectorAll(".slot-row")).map(row => ({
     from: row.querySelector(".fromTime").value,
     to: row.querySelector(".toTime").value
   }));
+  if (timeSlots.length === 0 || timeSlots.some(slot => !slot.from || !slot.to)) {
+    alert("Please add at least one valid time slot.");
+    return;
+  }
 
+  // ---------- SPECIALIZATION VALIDATION ----------
   if (!departmentSpecializationMap[department]?.includes(specialization)) {
     alert(`❌ "${specialization}" is not valid for ${department}.`);
     return;
   }
 
   try {
-    if (editDoctorId) {
-      /* ------------ UPDATE ------------ */
-      await updateDoc(doc(db, "doctors", editDoctorId), {
-        name,
-        qualification,
-        department,
-        specialization,
-        email,
-        phone,
-        status,
-        availableDays,
-        timeSlots
-      });
+    // ---------- UNIQUE CHECK ----------
+    const snap = await getDocs(collection(db, "doctors"));
+    let isDuplicate = false;
 
+    snap.forEach(docSnap => {
+      const data = docSnap.data();
+      // skip current doctor when editing
+      if (editDoctorId && docSnap.id === editDoctorId) return;
+
+      if (data.doctorId === doctorId) isDuplicate = `Doctor ID "${doctorId}" already exists!`;
+      if (data.email === email) isDuplicate = `Email "${email}" already exists!`;
+      if (data.phone === phone) isDuplicate = `Phone "${phone}" already exists!`;
+    });
+
+    if (isDuplicate) {
+      alert(isDuplicate);
+      return;
+    }
+
+    if (editDoctorId) {
+      // ---------- UPDATE DOCTOR ----------
+      await updateDoc(doc(db, "doctors", editDoctorId), {
+        doctorId, name, qualification, department, specialization, email, phone, status, availableDays, timeSlots
+      });
       alert("✔ Doctor updated successfully!");
       addDoctorBtn.textContent = "Add Doctor";
       editDoctorId = null;
-
     } else {
-      /* ------------ ADD ------------ */
-      const doctorId = await generateDoctorId();
-
+      // ---------- ADD DOCTOR ----------
       await addDoc(collection(db, "doctors"), {
-        doctorId,
-        name,
-        qualification,
-        department,
-        specialization,
-        email,
-        phone,
-        status,
-        availableDays,
-        timeSlots
+        doctorId, name, qualification, department, specialization, email, phone, status, availableDays, timeSlots
       });
-
       alert("✔ Doctor added successfully!");
     }
 
+    // RESET FORM
     doctorForm.reset();
     timeSlotsContainer.innerHTML = "";
 
@@ -198,11 +215,7 @@ function loadDoctors() {
         <td>${data.specialization}</td>
         <td>${data.email}</td>
         <td>${data.phone}</td>
-        <td>
-          <span class="status-badge ${statusClass}">
-            ${data.status}
-          </span>
-        </td>
+        <td><span class="status-badge ${statusClass}">${data.status}</span></td>
         <td>
           <button class="action-btn edit-btn" data-id="${id}">Edit</button>
           <button class="action-btn delete-btn" data-id="${id}">Delete</button>
@@ -222,6 +235,7 @@ function loadDoctors() {
         editDoctorId = docId;
         addDoctorBtn.textContent = "Update Doctor";
 
+        document.getElementById("docId").value = data.doctorId;
         document.getElementById("docName").value = data.name;
         document.getElementById("docQualification").value = data.qualification;
         document.getElementById("docDepartment").value = data.department;
@@ -244,8 +258,7 @@ function loadDoctors() {
             <input type="time" class="toTime" value="${slot.to}" />
             <button type="button" class="removeSlotBtn">✖</button>
           `;
-          div.querySelector(".removeSlotBtn")
-            .addEventListener("click", () => div.remove());
+          div.querySelector(".removeSlotBtn").addEventListener("click", () => div.remove());
           timeSlotsContainer.appendChild(div);
         });
 

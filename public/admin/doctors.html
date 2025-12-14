@@ -8,7 +8,7 @@
   <!-- Shared Admin Style -->
   <link rel="stylesheet" href="../assets/css/admin.css" />
 
-  <!-- NEW Modern Doctor Layout -->
+  <!-- Modern Doctor Layout -->
   <link rel="stylesheet" href="../assets/css/doctor.css" />
 </head>
 
@@ -16,14 +16,10 @@
   <!-- TOP BAR -->
   <header class="topbar">
     <h1>Artemis Hospitals — Doctor Management</h1>
-
     <div class="top-actions">
       <span id="adminEmail">admin@artemishospitals.com</span>
-          <a href="doctors.html">Doctor</a>
-          <a href="patient.html">Patient</a>
-        </div>
-      </div>
-
+      <a href="doctors.html">Doctor</a>
+      <a href="patient.html">Patient</a>
       <button id="logoutBtn">Logout</button>
     </div>
   </header>
@@ -32,159 +28,119 @@
 
     <!-- ADD DOCTOR -->
     <section class="card form-card">
-      <h2>Add Doctor</h2>
+ <button type="button" id="scrollToDBtn">Doctors List</button>
+      <h2>Doctor</h2>
 
-  <form id="doctorForm" novalidate>
+      <form id="doctorForm" novalidate>
+        <!-- Row 1 -->
+        <div class="row">
+          <div class="field">
+            <label>Doctor ID</label>
+            <input type="text" id="docId" placeholder="DOC001" title="Doctor ID must be like DOC001" required />
+          </div>
+          <div class="field">
+            <label>Doctor Name</label>
+            <input type="text" id="docName" title="Name must contain only letters (min 3 characters)" minlength="3" required />
+          </div>
+        </div>
 
-  <!-- Row 1 -->
-  <div class="row">
-    <div class="field">
-      <label>Doctor ID</label>
-      <input
-        type="text"
-        id="docId"
-        placeholder="DOC001"
-        pattern="DOC[0-9]{3,}"
-        title="Doctor ID must be like DOC001"
-        required
-      />
-    </div>
+        <!-- Row 2 -->
+        <div class="row">
+          <div class="field">
+            <label>Qualification</label>
+            <select id="docQualification" required>
+              <option value="" selected>Select...</option>
+              <option>MBBS</option>
+              <option>MD</option>
+              <option>MS</option>
+              <option>DM</option>
+              <option>MCh</option>
+              <option>BDS</option>
+              <option>MDS</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Department</label>
+            <select id="docDepartment" required>
+              <option value="" selected>Select...</option>
+              <option>Anesthesiology</option>
+              <option>Cardiology</option>
+              <option>Neurology</option>
+              <option>Orthopedics</option>
+              <option>Gastroenterology</option>
+              <option>Oncology</option>
+              <option>Pediatrics</option>
+              <option>Urology</option>
+              <option>Dermatology</option>
+              <option>ENT</option>
+              <option>General Surgery</option>
+            </select>
+          </div>
+        </div>
 
-    <div class="field">
-      <label>Doctor Name</label>
-      <input
-        type="text"
-        id="docName"
-        pattern="[A-Za-z\s]{3,}"
-        title="Name must contain only letters (min 3 characters)"
-        minlength="3"
-        required
-      />
-    </div>
-  </div>
+        <!-- Row 3 -->
+        <div class="row">
+          <div class="field">
+            <label>Specialization</label>
+            <select id="docSpecialization" required>
+              <option value="" selected>Select...</option>
+              <option>Anesthesiologist</option>
+              <option>Cardiologist</option>
+              <option>Neurologist</option>
+              <option>Orthopedic Surgeon</option>
+              <option>Gastroenterologist</option>
+              <option>Oncologist</option>
+              <option>Pediatrician</option>
+              <option>Urologist</option>
+              <option>Dermatologist</option>
+              <option>ENT Specialist</option>
+              <option>General Surgeon</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Doctor Status</label>
+            <select id="docStatus" required>
+              <option value="" selected>Select...</option>
+              <option>Active</option>
+              <option>Not Available</option>
+            </select>
+          </div>
+        </div>
 
-  <!-- Row 2 -->
-  <div class="row">
-    <div class="field">
-      <label>Qualification</label>
-      <select id="docQualification" required>
-        <option value="">Select...</option>
-        <option>MBBS</option><option>MD</option><option>MS</option>
-        <option>DM</option><option>MCh</option><option>BDS</option><option>MDS</option>
-      </select>
-    </div>
+        <!-- Row 4 -->
+        <div class="row">
+          <div class="field">
+            <label>Email</label>
+            <input type="email" id="docEmail" placeholder="doctor@hospital.com" required />
+          </div>
+          <div class="field">
+            <label>Phone</label>
+            <input type="tel" id="docPhone" maxlength="10" title="Enter a valid 10-digit Indian mobile number" required />
+          </div>
+        </div>
 
-    <div class="field">
-      <label>Department</label>
-      <select id="docDepartment" required>
-        <option value="">Select...</option>
-        <option>Anesthesiology</option><option>Cardiology</option>
-        <option>Neurology</option><option>Orthopedics</option>
-        <option>Gastroenterology</option><option>Oncology</option>
-        <option>Pediatrics</option><option>Urology</option>
-        <option>Dermatology</option><option>ENT</option>
-        <option>General Surgery</option>
-      </select>
-    </div>
-  </div>
+        <!-- Available Days -->
+        <fieldset>
+          <legend>Available Days</legend>
+          <div class="days-checkboxes">
+            <label><input type="checkbox" name="availableDays" value="Monday" /> Monday</label>
+            <label><input type="checkbox" name="availableDays" value="Tuesday" /> Tuesday</label>
+            <label><input type="checkbox" name="availableDays" value="Wednesday" /> Wednesday</label>
+            <label><input type="checkbox" name="availableDays" value="Thursday" /> Thursday</label>
+            <label><input type="checkbox" name="availableDays" value="Friday" /> Friday</label>
+            <label><input type="checkbox" name="availableDays" value="Saturday" /> Saturday</label>
+          </div>
+        </fieldset>
 
-  <!-- Row 3 -->
-  <div class="row">
-    <div class="field">
-      <label>Specialization</label>
-      <select id="docSpecialization" required>
-        <option value="">Select...</option>
-        <option>Anesthesiologist</option>
-        <option>Cardiologist</option>
-        <option>Neurologist</option>
-        <option>Orthopedic Surgeon</option>
-        <option>Gastroenterologist</option>
-        <option>Oncologist</option>
-        <option>Pediatrician</option>
-        <option>Urologist</option>
-        <option>Dermatologist</option>
-        <option>ENT Specialist</option>
-        <option>General Surgeon</option>
-      </select>
-    </div>
+        <!-- Time Slots -->
+        <fieldset>
+          <legend>Time Slots</legend>
+          <div id="timeSlotsContainer"></div>
+          <button type="button" id="addSlotBtn" class="slot-btn">+ Add Time Slot</button>
+        </fieldset>
 
-    <div class="field">
-      <label>Doctor Status</label>
-      <select id="docStatus" required>
-        <option value="">Select...</option>
-        <option>Active</option>
-        <option>Not Available</option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Row 4 -->
-  <div class="row">
-    <div class="field">
-      <label>Email</label>
-      <input
-        type="email"
-        id="docEmail"
-        placeholder="doctor@hospital.com"
-        required
-      />
-    </div>
-
-    <div class="field">
-      <label>Phone</label>
-      <input
-        type="tel"
-        id="docPhone"
-        pattern="[6-9][0-9]{9}"
-        maxlength="10"
-        title="Enter a valid 10-digit Indian mobile number"
-        required
-      />
-    </div>
-  </div>
-
-  <!-- Available Days -->
-  <fieldset>
-    <legend>Available Days</legend>
-
-    <!-- Required group trick -->
-    <input type="checkbox" id="dayCheckRequired" style="display:none" required>
-
-    <div class="days-checkboxes">
-      <label><input type="checkbox" value="Monday" /> Monday</label>
-      <label><input type="checkbox" value="Tuesday" /> Tuesday</label>
-      <label><input type="checkbox" value="Wednesday" /> Wednesday</label>
-      <label><input type="checkbox" value="Thursday" /> Thursday</label>
-      <label><input type="checkbox" value="Friday" /> Friday</label>
-      <label><input type="checkbox" value="Saturday" /> Saturday</label>
-    </div>
-  </fieldset>
-
-  <!-- Time Slots -->
-  <fieldset>
-    <legend>Time Slots</legend>
-
-    <!-- Minimum one slot required (HTML-level) -->
-    <input
-      type="text"
-      id="timeSlotRequired"
-      style="display:none"
-      required
-    />
-
-    <div id="timeSlotsContainer"></div>
-
-    <button type="button" id="addSlotBtn" class="slot-btn">
-      + Add Time Slot
-    </button>
-  </fieldset>
-
-  <button type="submit" id="addDoctorBtn" class="submit-btn">
-    Add Doctor
-  </button>
-
-</form>
-
+        <button type="submit" id="addDoctorBtn" class="submit-btn">Add Doctor</button>
+      </form>
     </section>
 
     <!-- DOCTOR LIST -->
@@ -193,36 +149,42 @@
 
       <div class="filter-row">
         <select id="filterDepartment">
-          <option value="">Filter by Department</option>
-          <option>Anesthesiology</option><option>Cardiology</option><option>Neurology</option>
-          <option>Orthopedics</option><option>Gastroenterology</option><option>Oncology</option>
-          <option>Pediatrics</option><option>Urology</option><option>Dermatology</option>
-          <option>ENT</option><option>General Surgery</option>
+          <option value="" selected>Filter by Department</option>
+          <option>Anesthesiology</option>
+          <option>Cardiology</option>
+          <option>Neurology</option>
+          <option>Orthopedics</option>
+          <option>Gastroenterology</option>
+          <option>Oncology</option>
+          <option>Pediatrics</option>
+          <option>Urology</option>
+          <option>Dermatology</option>
+          <option>ENT</option>
+          <option>General Surgery</option>
         </select>
 
         <input type="text" id="searchName" placeholder="Search by name..." />
         <button id="searchBtn" class="search-btn">Search</button>
       </div>
 
-<div class="table-wrapper">
-  <table class="doctor-table">
-    <thead>
-      <tr>
-        <th>Doctor ID</th>
-        <th>Name</th>
-        <th>Department</th>
-        <th>Specialization</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody id="doctorsList"></tbody>
-  </table>
-</div>
+      <div class="table-wrapper">
+        <table class="doctor-table">
+          <thead>
+            <tr>
+              <th>Doctor ID</th>
+              <th>Name</th>
+              <th>Department</th>
+              <th>Specialization</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="doctorsList"></tbody>
+        </table>
+      </div>
     </section>
-
   </main>
 
   <script type="module" src="../assets/js/admin/doctors.js"></script>
