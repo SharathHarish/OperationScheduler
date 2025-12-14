@@ -1,7 +1,7 @@
 // Import Firebase modules
 import { createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
 import { doc, setDoc } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-import { auth, db } from './firebase-init.js';
+import { auth, db } from '../firebase/firebase-init.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 

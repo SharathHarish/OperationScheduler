@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patient Management | Admin</title>
-  <link rel="stylesheet" href="../css/patients.css" />
+  <link rel="stylesheet" href="../assets/css/patients.css" />
 </head>
 
 <body>
@@ -95,8 +95,13 @@
         </div>
 
         <div class="field">
-          <label for="patientEmail">Email</label>
-          <input type="email" id="patientEmail" name="patientEmail" placeholder="Email (optional)" />
+          <label for="patientEmail">Email</label><input
+  type="email"
+  id="patientEmail"
+  name="patientEmail"
+  placeholder="Email address"
+  required
+/>
           <div class="error" data-for="patientEmail"></div>
         </div>
 
@@ -146,8 +151,9 @@
   </main>
 
   <!-- keep your firebase-init.js path (must export db) -->
-  <script type="module" src="../js/firebase-init.js"></script>
-  <script type="module" src="../js/patients.js"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script type="module" src="../assets/js/firebase/firebase-init.js"></script>
+  <script type="module" src="../assets/js/admin/patients.js"></script>
 
 </body>
 </html>

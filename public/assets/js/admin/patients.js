@@ -1,20 +1,18 @@
 // -----------------------------
 // 🔹 patients.js
 // -----------------------------
-// Make sure firebase-init.js exports `db` and that file path is correct in HTML
-// This file is ESM module (type="module") in the HTML
 
 import { collection, getDocs, setDoc, doc, deleteDoc, getDoc } 
   from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { db } from "./firebase-init.js";
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+import { db } from "../firebase/firebase-init.js"
 
 // -----------------------------
 // Supabase client (keep your key here as before)
 // -----------------------------
 const supabaseUrl = 'https://neshwkyiacakcwcgsrsg.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lc2h3a3lpYWNha2N3Y2dzcnNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyOTU4ODUsImV4cCI6MjA3ODg3MTg4NX0.U9TaN675524qlZXDcoJgZR7gOVJHmsuFO2QQUqovGQE';
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
 
 // -----------------------------
 // DOM Elements

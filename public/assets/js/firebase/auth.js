@@ -88,7 +88,7 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
         showDialog("success", "Login Successful", "Redirecting…");
         setTimeout(() => {
             if (role === 'admin') 
-                window.location.href = 'admin.html';
+                window.location.href = 'admin/admin.html';
             else if (role === 'patient') 
                 window.location.href = 'poperation.html';
             else 
