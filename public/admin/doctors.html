@@ -19,12 +19,8 @@
 
     <div class="top-actions">
       <span id="adminEmail">admin@artemishospitals.com</span>
-
-      <div class="dropdown">
-        <button class="dropbtn">Manage ▼</button>
-        <div class="dropdown-content">
           <a href="doctors.html">Doctor</a>
-          <a href="patients.html">Patient</a>
+          <a href="patient.html">Patient</a>
         </div>
       </div>
 
@@ -208,7 +204,23 @@
         <button id="searchBtn" class="search-btn">Search</button>
       </div>
 
-      <ul id="doctorsList" class="list"></ul>
+<div class="table-wrapper">
+  <table class="doctor-table">
+    <thead>
+      <tr>
+        <th>Doctor ID</th>
+        <th>Name</th>
+        <th>Department</th>
+        <th>Specialization</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="doctorsList"></tbody>
+  </table>
+</div>
     </section>
 
   </main>

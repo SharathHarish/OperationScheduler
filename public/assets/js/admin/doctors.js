@@ -8,7 +8,6 @@ import {
   updateDoc,
   deleteDoc,
   query,
-  where,
   onSnapshot,
   orderBy
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
@@ -22,7 +21,8 @@ const doctorForm = document.getElementById("doctorForm");
 const addDoctorBtn = document.getElementById("addDoctorBtn");
 const addSlotBtn = document.getElementById("addSlotBtn");
 const timeSlotsContainer = document.getElementById("timeSlotsContainer");
-const doctorsList = document.getElementById("doctorsList");
+
+const doctorsList = document.getElementById("doctorsList"); // <tbody>
 
 const filterDepartment = document.getElementById("filterDepartment");
 const searchName = document.getElementById("searchName");
@@ -31,7 +31,7 @@ const searchBtn = document.getElementById("searchBtn");
 /* -------------------------------------------------------
    GLOBAL VARIABLES
 -------------------------------------------------------- */
-let editDoctorId = null; // 🔥 Tracks if editing
+let editDoctorId = null;
 
 /* -------------------------------------------------------
    LOGOUT
@@ -47,7 +47,7 @@ document.getElementById("logoutBtn")?.addEventListener("click", async () => {
 -------------------------------------------------------- */
 addSlotBtn.addEventListener("click", () => {
   const slotDiv = document.createElement("div");
-  slotDiv.classList.add("slot-row");
+  slotDiv.className = "slot-row";
 
   slotDiv.innerHTML = `
     <input type="time" class="fromTime" required />
@@ -56,13 +56,14 @@ addSlotBtn.addEventListener("click", () => {
     <button type="button" class="removeSlotBtn">✖</button>
   `;
 
-  slotDiv.querySelector(".removeSlotBtn").addEventListener("click", () => slotDiv.remove());
+  slotDiv.querySelector(".removeSlotBtn")
+    .addEventListener("click", () => slotDiv.remove());
 
   timeSlotsContainer.appendChild(slotDiv);
 });
 
 /* -------------------------------------------------------
-   DEPT – SPECIALIZATION VALIDATION
+   DEPARTMENT – SPECIALIZATION MAP
 -------------------------------------------------------- */
 const departmentSpecializationMap = {
   "Cardiology": ["Cardiologist"],
@@ -79,7 +80,7 @@ const departmentSpecializationMap = {
 };
 
 /* -------------------------------------------------------
-   GENERATE DOCTOR ID (USED ONLY FOR ADD)
+   GENERATE DOCTOR ID (AUTO)
 -------------------------------------------------------- */
 async function generateDoctorId() {
   const snap = await getDocs(collection(db, "doctors"));
@@ -101,29 +102,26 @@ doctorForm.addEventListener("submit", async (e) => {
   const phone = document.getElementById("docPhone").value.trim();
   const status = document.getElementById("docStatus").value;
 
-  const availableDays = Array.from(document.querySelectorAll('input[name="availableDays"]:checked')).map(d => d.value);
+  const availableDays = Array.from(
+    document.querySelectorAll('input[name="availableDays"]:checked')
+  ).map(d => d.value);
 
-  const timeSlots = Array.from(document.querySelectorAll(".slot-row")).map(row => ({
+  const timeSlots = Array.from(
+    document.querySelectorAll(".slot-row")
+  ).map(row => ({
     from: row.querySelector(".fromTime").value,
     to: row.querySelector(".toTime").value
   }));
 
-  // Department & specialization validation
   if (!departmentSpecializationMap[department]?.includes(specialization)) {
     alert(`❌ "${specialization}" is not valid for ${department}.`);
     return;
   }
 
-  const doctorsRef = collection(db, "doctors");
-
   try {
     if (editDoctorId) {
-      /* -------------------------------------------------------
-         🔥 UPDATE EXISTING DOCTOR
-      -------------------------------------------------------- */
-      const docRef = doc(db, "doctors", editDoctorId);
-
-      await updateDoc(docRef, {
+      /* ------------ UPDATE ------------ */
+      await updateDoc(doc(db, "doctors", editDoctorId), {
         name,
         qualification,
         department,
@@ -135,17 +133,15 @@ doctorForm.addEventListener("submit", async (e) => {
         timeSlots
       });
 
-      alert(`✔ Doctor updated successfully!`);
+      alert("✔ Doctor updated successfully!");
       addDoctorBtn.textContent = "Add Doctor";
       editDoctorId = null;
 
     } else {
-      /* -------------------------------------------------------
-         ➕ ADD NEW DOCTOR
-      -------------------------------------------------------- */
+      /* ------------ ADD ------------ */
       const doctorId = await generateDoctorId();
 
-      await addDoc(doctorsRef, {
+      await addDoc(collection(db, "doctors"), {
         doctorId,
         name,
         qualification,
@@ -158,7 +154,7 @@ doctorForm.addEventListener("submit", async (e) => {
         timeSlots
       });
 
-      alert(`✔ Doctor added successfully!`);
+      alert("✔ Doctor added successfully!");
     }
 
     doctorForm.reset();
@@ -166,16 +162,16 @@ doctorForm.addEventListener("submit", async (e) => {
 
   } catch (error) {
     console.error(error);
-    alert("Error saving doctor.");
+    alert("❌ Error saving doctor.");
   }
 });
 
 /* -------------------------------------------------------
-   LIVE DOCTOR LIST
+   LOAD DOCTORS → TABLE
 -------------------------------------------------------- */
 function loadDoctors() {
   const q = query(collection(db, "doctors"), orderBy("doctorId"));
-  
+
   onSnapshot(q, (snapshot) => {
     doctorsList.innerHTML = "";
 
@@ -189,47 +185,38 @@ function loadDoctors() {
       if (departmentFilter && data.department !== departmentFilter) return;
       if (search && !data.name.toLowerCase().includes(search)) return;
 
-      const li = document.createElement("li");
-      li.classList.add("doctor-card");
+      let statusClass = "status-inactive";
+      if (data.status === "Active") statusClass = "status-active";
+      else if (data.status === "Not Available") statusClass = "status-unavailable";
 
-      // Status colors
-      let statusClass = "";
-      if (data.status === "Active") statusClass = "status-green";
-      else if (data.status === "Not Available") statusClass = "status-yellow";
-      else statusClass = "status-red";
+      const tr = document.createElement("tr");
 
-      li.classList.add(statusClass);
-
-      li.innerHTML = `
-        <h3>${data.name}</h3>
-        <p><strong>ID:</strong> ${data.doctorId}</p>
-        <p><strong>Department:</strong> ${data.department}</p>
-        <p><strong>Specialization:</strong> ${data.specialization}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
-        <p><strong>Phone:</strong> ${data.phone}</p>
-        <p><strong>Status:</strong> ${data.status}</p>
-
-        <div class="card-buttons">
-          <button class="edit-btn" data-id="${id}">Edit</button>
-          <button class="delete-btn" data-id="${id}">Delete</button>
-        </div>
+      tr.innerHTML = `
+        <td>${data.doctorId}</td>
+        <td>${data.name}</td>
+        <td>${data.department}</td>
+        <td>${data.specialization}</td>
+        <td>${data.email}</td>
+        <td>${data.phone}</td>
+        <td>
+          <span class="status-badge ${statusClass}">
+            ${data.status}
+          </span>
+        </td>
+        <td>
+          <button class="action-btn edit-btn" data-id="${id}">Edit</button>
+          <button class="action-btn delete-btn" data-id="${id}">Delete</button>
+        </td>
       `;
 
-      doctorsList.appendChild(li);
+      doctorsList.appendChild(tr);
     });
 
-    if (!snapshot.size) {
-      doctorsList.innerHTML = "<p>No doctors found.</p>";
-    }
-
-    /* -------------------------------------------------------
-       EDIT BUTTON → PREFILL FORM
-    -------------------------------------------------------- */
+    /* ------------ EDIT ------------ */
     document.querySelectorAll(".edit-btn").forEach(btn => {
       btn.addEventListener("click", async () => {
         const docId = btn.dataset.id;
-        const docRef = doc(db, "doctors", docId);
-        const snap = await getDoc(docRef);
+        const snap = await getDoc(doc(db, "doctors", docId));
         const data = snap.data();
 
         editDoctorId = docId;
@@ -243,12 +230,10 @@ function loadDoctors() {
         document.getElementById("docPhone").value = data.phone;
         document.getElementById("docStatus").value = data.status;
 
-        // Days
         document.querySelectorAll('input[name="availableDays"]').forEach(cb => {
           cb.checked = data.availableDays.includes(cb.value);
         });
 
-        // Time Slots
         timeSlotsContainer.innerHTML = "";
         data.timeSlots.forEach(slot => {
           const div = document.createElement("div");
@@ -259,7 +244,8 @@ function loadDoctors() {
             <input type="time" class="toTime" value="${slot.to}" />
             <button type="button" class="removeSlotBtn">✖</button>
           `;
-          div.querySelector(".removeSlotBtn").addEventListener("click", () => div.remove());
+          div.querySelector(".removeSlotBtn")
+            .addEventListener("click", () => div.remove());
           timeSlotsContainer.appendChild(div);
         });
 
@@ -267,9 +253,7 @@ function loadDoctors() {
       });
     });
 
-    /* -------------------------------------------------------
-       DELETE BUTTON
-    -------------------------------------------------------- */
+    /* ------------ DELETE ------------ */
     document.querySelectorAll(".delete-btn").forEach(btn => {
       btn.addEventListener("click", async () => {
         if (!confirm("Delete this doctor?")) return;
@@ -283,8 +267,7 @@ function loadDoctors() {
 loadDoctors();
 
 /* -------------------------------------------------------
-   SEARCH AND FILTER
+   SEARCH & FILTER
 -------------------------------------------------------- */
 filterDepartment.addEventListener("change", loadDoctors);
 searchBtn.addEventListener("click", loadDoctors);
-

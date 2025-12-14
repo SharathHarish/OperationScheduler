@@ -210,50 +210,87 @@ legend {
 /* ---------------------------------------------------------
    DOCTOR LIST STYLING
 --------------------------------------------------------- */
-.list {
-  padding: 0;
-  margin: 0;
-  list-style: none;
+.table-wrapper {
+  overflow-x: auto;
+  margin-top: 20px;
 }
 
-.doctor-card {
+.doctor-table {
+  width: 100%;
+  border-collapse: collapse;
   background: #fff;
   border-radius: 10px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
 }
 
-/* Status colors */
+.doctor-table thead {
+  background: linear-gradient(90deg, #8a7b08, #b59f00);
+  color: #fff;
+}
+
+.doctor-table th,
+.doctor-table td {
+  padding: 14px 16px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.doctor-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s ease;
+}
+
+.doctor-table tbody tr:hover {
+  background: #faf7e8;
+}
+
+/* Status badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
 .status-active {
-  border-left: 5px solid #2ecc71; /* Green */
+  background: #dcfce7;
+  color: #166534;
 }
 
-.status-resigned {
-  border-left: 5px solid #ff3b30; /* Red */
+.status-unavailable {
+  background: #fef3c7;
+  color: #92400e;
 }
 
-.status-retired {
-  border-left: 5px solid #808080; /* Grey */
+.status-inactive {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
-.status-notavailable {
-  border-left: 5px solid #f1c40f; /* Yellow */
-}
-
-/* Buttons inside card */
-.edit-btn, .delete-btn {
-  padding: 8px 13px;
+/* Action buttons */
+.action-btn {
+  padding: 6px 12px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
-  margin-right: 10px;
-  color: #fff;
-  font-weight: 600;
+  font-size: 13px;
 }
 
-.edit-btn { background: #0066cc; }
-.delete-btn { background: #cc0000; }
+.edit-btn {
+  background: #2563eb;
+  color: white;
+  margin-right: 6px;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.edit-btn:hover { background: #1e40af; }
+.delete-btn:hover { background: #991b1b; }
 
 /* ---------------------------------------------------------
    RESPONSIVE DESIGN
