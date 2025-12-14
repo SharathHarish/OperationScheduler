@@ -7,12 +7,11 @@ import { collection, getDocs, setDoc, doc, deleteDoc, getDoc }
 import { db } from "../firebase/firebase-init.js"
 
 // -----------------------------
-// Supabase client (keep your key here as before)
+// Supabase client
 // -----------------------------
 const supabaseUrl = 'https://neshwkyiacakcwcgsrsg.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5lc2h3a3lpYWNha2N3Y2dzcnNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMyOTU4ODUsImV4cCI6MjA3ODg3MTg4NX0.U9TaN675524qlZXDcoJgZR7gOVJHmsuFO2QQUqovGQE';
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-
 
 // -----------------------------
 // DOM Elements
@@ -118,7 +117,6 @@ function validateForm(isEdit = false) {
   if (!phone) { showFieldError("patientPhone", "Phone is required"); return { ok:false }; }
   if (phone.length !== 10) { showFieldError("patientPhone", "Phone must be 10 digits"); return { ok:false }; }
   if (!/^\d{10}$/.test(values.patientPhone)) {
-    // if input had non-digit chars, highlight but accept normalized digits for storage
     showFieldError("patientPhone", "Phone must contain only digits");
     return { ok:false };
   }
@@ -235,7 +233,7 @@ function renderPatients(filter = "") {
 }
 
 // -----------------------------
-// Submit (Add / Update)
+// Submit (Add / Update) with uniqueness validation
 // -----------------------------
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -246,26 +244,52 @@ form.addEventListener("submit", async (e) => {
 
   const vals = validation.values;
   const patientId = vals.patientId;
+  const email = vals.patientEmail;
+  const phone = vals.patientPhone;
   const fileInput = document.getElementById("patientDoc");
   let fileURL = "";
 
-  // If creating (not editing), check uniqueness
-  if (!isEdit) {
-    try {
-      const snapshot = await getDoc(doc(db, "patients", patientId));
-      if (snapshot.exists()) {
+  // -----------------------------
+  // 🔹 Check uniqueness of Patient ID, Email, Phone
+  // -----------------------------
+  try {
+    const snapshot = await getDocs(collection(db, "patients"));
+    let duplicate = false;
+
+    snapshot.forEach(docSnap => {
+      const p = docSnap.data();
+      const id = docSnap.id;
+
+      // Skip current patient if editing
+      if (isEdit && patients[form.dataset.editIndex].id === id) return;
+
+      if (id === patientId) {
         showFieldError("patientId", "Patient ID already exists");
         showDialog("error", "Duplicate ID", "Patient ID already exists. Please choose another ID.");
-        return;
+        duplicate = true;
       }
-    } catch (err) {
-      console.error("Error checking patient id:", err);
-      showDialog("error", "Error", "Could not validate Patient ID uniqueness.");
-      return;
-    }
+      if (email && p.email === email) {
+        showFieldError("patientEmail", "Email already exists");
+        showDialog("error", "Duplicate Email", "Patient Email already exists. Please use another.");
+        duplicate = true;
+      }
+      if (phone && p.phone === phone) {
+        showFieldError("patientPhone", "Phone already exists");
+        showDialog("error", "Duplicate Phone", "Patient Phone already exists. Please use another.");
+        duplicate = true;
+      }
+    });
+
+    if (duplicate) return;
+  } catch (err) {
+    console.error("Error checking uniqueness:", err);
+    showDialog("error", "Error", "Could not validate uniqueness. Try again.");
+    return;
   }
 
-  // File upload (optional)
+  // -----------------------------
+  // File upload logic (unchanged)
+  // -----------------------------
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
     const allowed = ["application/pdf", "image/jpeg", "image/jpg"];
@@ -294,7 +318,7 @@ form.addEventListener("submit", async (e) => {
     }
   }
 
-  // build patient object
+  // Build patient object
   const patientObj = {
     patientId: vals.patientId, 
     name: vals.patientName,
@@ -310,9 +334,7 @@ form.addEventListener("submit", async (e) => {
 
   try {
     if (isEdit) {
-      // update existing doc
       const editIndex = Number(form.dataset.editIndex);
-      const existingId = patients[editIndex].id;
       await setDoc(doc(db, "patients", patientId), patientObj);
       patients[editIndex] = { id: patientId, ...patientObj };
       delete form.dataset.editIndex;
@@ -320,7 +342,6 @@ form.addEventListener("submit", async (e) => {
       addBtn.textContent = "Add Patient";
       showDialog("success", "Updated", "Patient updated successfully.");
     } else {
-      // add new with provided patientId
       await setDoc(doc(db, "patients", patientId), patientObj);
       patients.push({ id: patientId, ...patientObj });
       showDialog("success", "Added", "Patient added successfully.");
@@ -364,15 +385,11 @@ list.addEventListener("click", async (e) => {
     if (!confirm(`Delete patient ${p.name} (${p.id})? This action is permanent.`)) return;
 
     try {
-      // delete from Firestore
       await deleteDoc(doc(db, "patients", p.id));
 
-      // delete file from supabase if exists
       if (p.docs) {
         try {
           const url = new URL(p.docs);
-          // path in bucket: remove leading /storage/v1/... parts until bucket path - this depends on supabase url format
-          // For safety try to extract filename after last '/'
           const filename = url.pathname.split('/').pop();
           const { error } = await supabase.storage.from('PatientDocs').remove([filename]);
           if (error) console.error("Error deleting supabase file:", error);
@@ -390,33 +407,26 @@ list.addEventListener("click", async (e) => {
     }
   }
   if (e.target.classList.contains("schedule-btn")) {
-  const patientId = e.target.dataset.id;
-
-  // Redirect with patientId in URL
-  window.location.href = `operation.html?patientId=${patientId}`;
-  return;
-}
+    const patientId = e.target.dataset.id;
+    window.location.href = `operation.html?patientId=${patientId}`;
+    return;
+  }
 });
 
 // Scroll to Add Patient section
 document.getElementById("scrollToAddPatientBtn")?.addEventListener("click", () => {
     const section = document.getElementById("aoperation");
-    if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-    } else {
-        console.warn("Add Patient section not found");
-    }
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+    else console.warn("Add Patient section not found");
 });
 
 // Scroll to Scheduled Operations section
 document.getElementById("scrollToSBtn")?.addEventListener("click", () => {
     const section = document.getElementById("soperation");
-    if (section) {
-        section.scrollIntoView({ behavior: "smooth" });
-    } else {
-        console.warn("Scheduled Operations section not found");
-    }
+    if (section) section.scrollIntoView({ behavior: "smooth" });
+    else console.warn("Scheduled Operations section not found");
 });
+
 // -----------------------------
 // Filters & search
 // -----------------------------
