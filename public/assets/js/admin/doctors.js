@@ -52,17 +52,15 @@ addSlotBtn.addEventListener("click", () => {
    DEPARTMENT – SPECIALIZATION MAP
 -------------------------------------------------------- */
 const departmentSpecializationMap = {
-  "Cardiology":["Cardiologist"],
-  "Neurology":["Neurologist"],
-  "Orthopedics":["Orthopedic Surgeon"],
-  "Gastroenterology":["Gastroenterologist"],
-  "Oncology":["Oncologist"],
-  "Pediatrics":["Pediatrician"],
-  "Urology":["Urologist"],
-  "Dermatology":["Dermatologist"],
-  "ENT":["ENT Specialist"],
-  "Anesthesiology":["Anesthesiologist"],
-  "General Surgery":["General Surgeon"]
+  "Orthopedics": ["Orthopedic Surgeon"],
+  "General Surgery": ["General Surgeon"],
+  "Neurosurgery": ["Neurosurgeon"],
+  "Cardiothoracic Surgery": ["Cardiothoracic Surgeon"],
+  "Plastic Surgery": ["Plastic Surgeon"],
+  "ENT": ["ENT Surgeon"],
+  "Urology": ["Urological Surgeon"],
+  "Pediatrics": ["Pediatric Surgeon"],
+  "Oncology": ["Oncological Surgeon"]
 };
 
 /* -------------------------------------------------------
@@ -218,6 +216,8 @@ function loadDoctors() {
         <td><span class="status-badge ${statusClass}">${data.status}</span></td>
         <td>
           <button class="action-btn edit-btn" data-id="${id}">Edit</button>
+</td>
+<td>
           <button class="action-btn delete-btn" data-id="${id}">Delete</button>
         </td>
       `;
@@ -284,3 +284,24 @@ loadDoctors();
 -------------------------------------------------------- */
 filterDepartment.addEventListener("change", loadDoctors);
 searchBtn.addEventListener("click", loadDoctors);
+
+// Scroll to DoctorsList section
+document.getElementById("scrollToDLBtn")?.addEventListener("click", () => {
+    const section = document.getElementById("dl");
+    if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+    } else {
+        console.warn("Doctors list section not found");
+    }
+});
+
+// Scroll to Add doctor section
+document.getElementById("scrollToADBtn")?.addEventListener("click", () => {
+    const section = document.getElementById("ad");
+    if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+    } else {
+        console.warn("Doctors list section not found");
+    }
+});
+

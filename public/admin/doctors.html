@@ -27,8 +27,11 @@
   <main class="container">
 
     <!-- ADD DOCTOR -->
-    <section class="card form-card">
- <button type="button" id="scrollToDBtn">Doctors List</button>
+    <section class="card form-card" id="ad">
+  <div class="form-actions">
+ <button type="button" id="scrollToDLBtn">Doctors List</button>
+</div>
+<br>
       <h2>Doctor</h2>
 
       <form id="doctorForm" novalidate>
@@ -83,18 +86,16 @@
           <div class="field">
             <label>Specialization</label>
             <select id="docSpecialization" required>
-              <option value="" selected>Select...</option>
-              <option>Anesthesiologist</option>
-              <option>Cardiologist</option>
-              <option>Neurologist</option>
+    <option value="" selected>Select...</option>
               <option>Orthopedic Surgeon</option>
-              <option>Gastroenterologist</option>
-              <option>Oncologist</option>
-              <option>Pediatrician</option>
-              <option>Urologist</option>
-              <option>Dermatologist</option>
-              <option>ENT Specialist</option>
-              <option>General Surgeon</option>
+      <option>General Surgeon</option>
+      <option>Neurosurgeon</option>
+      <option>Cardiothoracic Surgeon</option>
+      <option>Plastic Surgeon</option>
+      <option>ENT Surgeon</option>
+      <option>Urological Surgeon</option>
+      <option>Pediatric Surgeon</option>
+      <option>Oncological Surgeon</option>
             </select>
           </div>
           <div class="field">
@@ -144,7 +145,7 @@
     </section>
 
     <!-- DOCTOR LIST -->
-    <section class="card">
+    <section class="card" id="dl">
       <h2>Doctors List</h2>
 
       <div class="filter-row">
@@ -178,12 +179,16 @@
               <th>Email</th>
               <th>Phone</th>
               <th>Status</th>
-              <th>Actions</th>
+              <th></th>
+             <th></th>
             </tr>
           </thead>
           <tbody id="doctorsList"></tbody>
         </table>
       </div>
+ <div class="form-actions">
+<button type="button" id="scrollToADBtn">Add another doctor</button>
+</div>
     </section>
   </main>
 
