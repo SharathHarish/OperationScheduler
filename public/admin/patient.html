@@ -30,7 +30,7 @@
         <div class="form-actions">
      <button type="button" id="scrollToSBtn">Schedule Operation</button>
      </div>
-      <form id="patientForm" class="form-group" autocomplete="off" novalidate>
+      <form id="patientForm" class="form-group" autocomplete="off">
 
         <!-- Row 1 -->
         <div class="field">
@@ -110,7 +110,7 @@
 
         <div class="field">
           <label for="patientDoc">Documents (PDF / JPG)</label>
-          <input type="file" id="patientDoc" name="patientDoc" accept=".pdf,.jpg,.jpeg" />
+          <input type="file" id="patientDoc" name="patientDoc"  accept=".pdf,.jpg,.jpeg" required />
           <div class="error" data-for="patientDoc"></div>
         </div>
 

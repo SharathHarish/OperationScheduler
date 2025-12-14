@@ -146,6 +146,12 @@ body { margin:0; background:var(--bg); font-family: Inter, system-ui, sans-serif
 .popup-message { color:#444; margin-bottom:14px; }
 .popup-btn { background:var(--accent); color:#fff; padding:10px 14px; border:0; border-radius:8px; cursor:pointer; font-weight:700; }
 
+#patientsList {
+  border: 2px solid brown; /* brown border */
+  border-radius: 5px;       /* optional: rounded corners */
+  padding: 10px;            /* some padding inside the list */
+  list-style-type: none;    /* optional: remove bullets */
+}
 /* Responsive */
 @media (max-width:880px) {
   #patientForm { grid-template-columns: 1fr; }
