@@ -3,39 +3,42 @@ import {
   collection,
   query,
   where,
-  getDocs,
-  doc,
-  getDoc
+  getDocs
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 /* ---------------------------------------------------------
-   FETCH DOCTOR NAME USING ID
+   FETCH FULL DOCTOR DETAILS USING doctorId FIELD
 ----------------------------------------------------------*/
-async function getDoctorNameById(doctorId) {
-  if (!doctorId) return "-";
+async function getDoctorDetailsByDoctorId(doctorId) {
+  if (!doctorId) return null;
 
   try {
-    const docRef = doc(db, "doctors", doctorId);
-    const snap = await getDoc(docRef);
+    const q = query(
+      collection(db, "doctors"),
+      where("doctorId", "==", doctorId)
+    );
 
-    if (snap.exists()) {
-      return snap.data().name || "-";
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      return snapshot.docs[0].data(); // full doctor object
     }
-    return "-";
-  } catch (err) {
-    console.error("Error fetching doctor:", err);
-    return "-";
+
+    return null;
+  } catch (error) {
+    console.error("Error fetching doctor details:", error);
+    return null;
   }
 }
 
 /* ---------------------------------------------------------
-   FETCH LOGGED-IN PATIENT'S SURGERIES
+   FETCH LOGGED-IN PATIENT'S SCHEDULES
 ----------------------------------------------------------*/
 async function fetchPatientOperations() {
   const patientId = sessionStorage.getItem("patientId");
 
   if (!patientId) {
-    console.error("No patientId in sessionStorage");
+    console.error("patientId missing in sessionStorage");
     return [];
   }
 
@@ -45,34 +48,65 @@ async function fetchPatientOperations() {
       where("patientId", "==", patientId)
     );
 
-    const snap = await getDocs(q);
+    const snapshot = await getDocs(q);
     const operations = [];
 
-    snap.forEach(d => operations.push({ id: d.id, ...d.data() }));
+    snapshot.forEach(docSnap => {
+      operations.push({
+        id: docSnap.id,
+        ...docSnap.data()
+      });
+    });
 
     return operations;
 
-  } catch (err) {
-    console.error("Error fetching operations:", err);
+  } catch (error) {
+    console.error("Error fetching schedules:", error);
     return [];
   }
 }
 
 /* ---------------------------------------------------------
-   RENDER OPERATIONS AS TABLE
+   SHOW DOCTOR DETAILS POPUP
+----------------------------------------------------------*/
+function showDoctorPopup(doctor) {
+  const popupHTML = `
+    <div class="doctor-popup-overlay">
+      <div class="doctor-popup">
+        <h3>Doctor ${doctor.name}</h3>
+        <p><strong>Qualification:</strong> ${doctor.qualification || "-"}</p>
+        <p><strong>Specialization :</strong> ${doctor.specialization || "-"}</p>
+         <p><strong>Department:</strong> ${doctor.department || "-"}</p>
+        <p><strong>Email:</strong> ${doctor.email || "-"}</p>
+
+        <button id="closeDoctorPopup">Close</button>
+      </div>
+    </div>
+  `;
+
+  document.body.insertAdjacentHTML("beforeend", popupHTML);
+
+  document
+    .getElementById("closeDoctorPopup")
+    .addEventListener("click", () => {
+      document.querySelector(".doctor-popup-overlay").remove();
+    });
+}
+
+/* ---------------------------------------------------------
+   DISPLAY OPERATIONS TABLE
 ----------------------------------------------------------*/
 async function displayOperations() {
-  const list = document.getElementById("operationList");
-  list.innerHTML = "<p>Loading...</p>";
+  const container = document.getElementById("operationList");
+  container.innerHTML = "<p>Loading...</p>";
 
   const operations = await fetchPatientOperations();
 
   if (operations.length === 0) {
-    list.innerHTML = "<p>No operations scheduled.</p>";
+    container.innerHTML = "<p>No operations scheduled.</p>";
     return;
   }
 
-  // Create table
   let tableHTML = `
     <table class="operation-table">
       <thead>
@@ -81,22 +115,29 @@ async function displayOperations() {
           <th>Date</th>
           <th>Time</th>
           <th>OT Room</th>
-          <th>Surgeon</th>
+          <th>Doctor</th>
         </tr>
       </thead>
       <tbody>
   `;
 
   for (const op of operations) {
-    const doctorName = await getDoctorNameById(op.doctorId);
+    const doctor = await getDoctorDetailsByDoctorId(op.doctorId);
+    const doctorName = doctor ? doctor.name : "-";
 
     tableHTML += `
       <tr>
-        <td>${op.surgeryType}</td>
-        <td>${op.date}</td>
-        <td>${op.startTime} - ${op.endTime}</td>
-        <td>${op.otName}</td>
-        <td>Dr. ${doctorName}</td>
+        <td>${op.surgeryType || "-"}</td>
+        <td>${op.date || "-"}</td>
+        <td>${op.startTime || "-"} - ${op.endTime || "-"}</td>
+        <td>${op.otName || "-"}</td>
+        <td>
+          <span 
+            class="doctor-link" 
+            data-doctor-id="${op.doctorId}">
+            Dr.${doctorName}
+          </span>
+        </td>
       </tr>
     `;
   }
@@ -106,7 +147,24 @@ async function displayOperations() {
     </table>
   `;
 
-  list.innerHTML = tableHTML;
+  container.innerHTML = tableHTML;
+
+  /* ---------------------------------------------------------
+     CLICK HANDLER FOR DOCTOR NAME
+  ----------------------------------------------------------*/
+  document.querySelectorAll(".doctor-link").forEach(link => {
+    link.addEventListener("click", async () => {
+      const doctorId = link.getAttribute("data-doctor-id");
+      const doctor = await getDoctorDetailsByDoctorId(doctorId);
+
+      if (doctor) {
+        showDoctorPopup(doctor);
+      }
+    });
+  });
 }
 
+/* ---------------------------------------------------------
+   INITIAL LOAD
+----------------------------------------------------------*/
 document.addEventListener("DOMContentLoaded", displayOperations);
